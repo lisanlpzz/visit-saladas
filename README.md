@@ -1,47 +1,75 @@
-<<<<<<< HEAD
-# Astro Starter Kit: Minimal
+# Visit Saladas
 
-```sh
-npm create astro@latest -- --template minimal
+Visit Saladas es una guía turística digital para descubrir Saladas, Corrientes, Argentina. Reúne información e inspiración para conocer la historia, la naturaleza, la cultura y las propuestas locales, y planificar una visita.
+
+## Qué podés encontrar
+
+- **Experiencias y lugares:** recorridos por el casco histórico y propuestas para disfrutar la naturaleza.
+- **Mapa:** puntos de interés para orientarte y explorar la ciudad.
+- **Un día en Saladas:** ideas para organizar una visita.
+- **Eventos:** fiestas, actividades y propuestas locales.
+- **Alojamientos:** opciones para planificar la estadía.
+- **Galería:** imágenes de Saladas y sus atractivos.
+- **Transporte, contacto e información sobre la ciudad.**
+
+El sitio está disponible en español, inglés y portugués brasileño:
+
+- Español: `/`
+- English: `/en/`
+- Português: `/pt-br/`
+
+## Tecnologías
+
+- [Astro](https://astro.build/) para el sitio y sus páginas.
+- React para componentes interactivos.
+- TypeScript y Tailwind CSS.
+- Leaflet para mapas.
+
+## Requisitos
+
+- Node.js `>=22.12.0`
+- npm
+
+## Instalación y uso local
+
+Cloná el repositorio e instalá sus dependencias:
+
+```bash
+git clone https://github.com/lisanlpzz/visit-saladas.git
+cd visit-saladas
+npm install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Iniciá el servidor de desarrollo:
 
-## 🚀 Project Structure
+```bash
+npm run dev
+```
 
-Inside of your Astro project, you'll see the following folders and files:
+Astro mostrará en la terminal la dirección local para abrir el sitio en el navegador.
+
+## Comandos disponibles
+
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Inicia el servidor de desarrollo. |
+| `npm run build` | Genera la versión de producción en `dist/`. |
+| `npm run preview` | Previsualiza localmente la versión generada. |
+| `npm test` | Ejecuta las pruebas con Vitest. |
+
+## Estructura principal
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+src/
+├── components/   # Componentes de las páginas y secciones
+├── data/         # Contenido de alojamientos, eventos, mapas y más
+├── i18n/         # Idiomas y traducciones
+├── images/       # Imágenes usadas por el sitio
+├── layouts/      # Estructuras compartidas
+└── pages/        # Rutas del sitio, incluidas /en/ y /pt-br/
+public/           # Recursos estáticos
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Configuración del sitio
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-=======
-# visit-saladas
->>>>>>> 3f4e88d422d0935a57e89f936971b99f6f7f848c
+La URL del sitio se configura con la variable de entorno `SITE_URL`. Si no se define, se usa `https://visitsaladas.tur.ar`.
