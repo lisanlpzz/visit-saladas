@@ -2,7 +2,7 @@
 
 Visit Saladas es una guía turística digital para descubrir Saladas, Corrientes, Argentina. Reúne información e inspiración para conocer la historia, la naturaleza, la cultura y las propuestas locales, y planificar una visita.
 
-## Qué podés encontrar
+## Qué podés encontrar en la página
 
 - **Experiencias y lugares:** recorridos por el casco histórico y propuestas para disfrutar la naturaleza.
 - **Mapa:** puntos de interés para orientarte y explorar la ciudad.
