@@ -1,0 +1,240 @@
+---
+import { Image } from "astro:assets";
+import { obtenerEventos } from "../../data/eventos";
+import { localizarRuta, obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+
+const eventosResumen = obtenerEventos(idioma).map((evento) => ({
+  nombre: evento.nombre,
+  resumen: evento.resumen,
+  fecha: evento.fecha,
+  fechaISO: evento.fechaISO,
+  lugar: evento.lugar,
+  imagen: evento.portada.src,
+  alt: evento.alt,
+  href: localizarRuta(`/evento/${evento.slug}/`, idioma),
+}));
+const eventoInicial = obtenerEventos(idioma)[0];
+---
+
+<section
+  class="bg-[#F9F6F0] px-5 pb-16 pt-8 text-[#2a1b13] sm:px-8 sm:pb-20 sm:pt-10"
+  aria-labelledby="proximo-evento-titulo"
+  data-proximo-evento-banner
+  data-label-hoy={t("Hoy")}
+  data-label-falta-dia={t("Falta {dias} día")}
+  data-label-faltan-dias={t("Faltan {dias} días")}
+  aria-busy="true"
+>
+  <script type="application/json" data-banner-eventos-json set:html={JSON.stringify(eventosResumen)} />
+
+  <div class="mx-auto max-w-7xl">
+    <h2
+      id="proximo-evento-titulo"
+      class="mb-5 text-3xl font-extrabold tracking-[-0.03em] text-[#1E3A2F] after:mt-3 after:block after:h-[3px] after:w-14 after:rounded-full after:bg-[#FFC107] after:content-[''] sm:mb-6 sm:text-4xl"
+    >
+      {t("Próximo evento en la ciudad")}
+    </h2>
+    <div class="group relative flex flex-col overflow-hidden rounded-3xl border border-[#2a1b13]/10 bg-white shadow-[0_18px_48px_-28px_rgba(42,27,19,0.24)] md:flex-row md:items-center">
+      {/* Foto del evento */}
+      <a
+        href={localizarRuta(`/evento/${eventoInicial.slug}/`, idioma)}
+        data-banner-evento-enlace
+        class="relative block aspect-[16/9] w-full shrink-0 overflow-hidden bg-[#1E3A2F] focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#B34D36] md:aspect-[4/3] md:w-72 lg:w-[22rem]"
+        aria-label={`${t("Conocer el evento")} ${eventoInicial.nombre}`}
+      >
+        <Image
+          src={eventoInicial.portada}
+          alt={eventoInicial.alt}
+          data-banner-evento-img
+          class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04] motion-reduce:transform-none motion-reduce:transition-none"
+          loading="lazy"
+          decoding="async"
+        />
+        <span
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#F9F6F0]/55 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-white/60"
+        ></span>
+        <span
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-x-0 bottom-0 h-16 backdrop-blur-[3px] [mask-image:linear-gradient(to_bottom,transparent,black)] md:inset-y-0 md:inset-x-auto md:right-0 md:h-auto md:w-20 md:[mask-image:linear-gradient(to_right,transparent,black)]"
+        ></span>
+      </a>
+
+      {/* Información + cuenta regresiva + botones */}
+      <div class="flex flex-1 flex-col justify-between gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:px-8">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <span
+              data-banner-evento-dias
+              data-cargando="true"
+              aria-hidden="true"
+              class="inline-flex min-h-8 min-w-32 items-center rounded-full bg-[#FFC107] px-4 py-1 text-sm font-extrabold text-[#1E3A2F] shadow-sm"
+            ></span>
+          </div>
+
+          <h3
+            data-banner-evento-nombre
+            class="mt-3 max-w-[18ch] text-balance text-3xl font-extrabold leading-[1.05] tracking-[-0.035em] text-[#1E3A2F] sm:text-4xl lg:text-5xl"
+          >
+            {eventoInicial.nombre}
+          </h3>
+
+          <p class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-[#40564A] sm:text-sm">
+            <span data-banner-evento-fecha>{eventoInicial.fecha}</span>
+            <span aria-hidden="true" class="text-[#2a1b13]/25">·</span>
+            <span data-banner-evento-lugar>{eventoInicial.lugar}</span>
+          </p>
+        </div>
+
+        <div class="flex shrink-0 flex-wrap items-center gap-3">
+          <a
+            href={localizarRuta(`/evento/${eventoInicial.slug}/`, idioma)}
+            data-banner-evento-enlace
+            class="inline-flex min-h-11 items-center gap-2.5 rounded-full bg-[#FFC107] px-6 text-sm font-bold text-[#1E3A2F] shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#B34D36]"
+          >
+            <span>{t("Conocer el evento")}</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <a
+            href={localizarRuta("/eventos/", idioma)}
+            class="inline-flex min-h-11 items-center rounded-full border border-[#2a1b13]/15 px-4 text-xs font-bold text-[#2a1b13]/75 transition-colors hover:border-[#1E3A2F]/40 hover:text-[#1E3A2F] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#1E3A2F]"
+          >
+            {t("Ver todos los eventos")}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { calculateEventCountdown } from "../../utils/event-countdown";
+
+  interface EventoBanner {
+    nombre: string;
+    fecha: string;
+    fechaISO: string | null;
+    lugar: string;
+    imagen: string;
+    alt: string;
+    href: string;
+  }
+
+  const banner = document.querySelector<HTMLElement>("[data-proximo-evento-banner]");
+  const jsonEl = banner?.querySelector<HTMLScriptElement>("[data-banner-eventos-json]");
+
+  if (banner && jsonEl?.textContent) {
+    try {
+      const eventos = JSON.parse(jsonEl.textContent) as EventoBanner[];
+      const ahora = new Date();
+      const hoyISO = [
+        ahora.getFullYear(),
+        String(ahora.getMonth() + 1).padStart(2, "0"),
+        String(ahora.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      const proximo =
+        eventos
+          .filter((e) => e.fechaISO && e.fechaISO >= hoyISO)
+          .sort((a, b) => a.fechaISO!.localeCompare(b.fechaISO!))[0] ?? eventos[0];
+
+      if (proximo) {
+        banner.querySelectorAll<HTMLAnchorElement>("[data-banner-evento-enlace]").forEach((a) => {
+          a.href = proximo.href;
+        });
+        const img = banner.querySelector<HTMLImageElement>("[data-banner-evento-img]");
+        if (img) {
+          img.src = proximo.imagen;
+          img.alt = proximo.alt;
+        }
+        const nombreEl = banner.querySelector("[data-banner-evento-nombre]");
+        const fechaEl = banner.querySelector("[data-banner-evento-fecha]");
+        const lugarEl = banner.querySelector("[data-banner-evento-lugar]");
+        const diasEl = banner.querySelector("[data-banner-evento-dias]");
+
+        if (nombreEl) nombreEl.textContent = proximo.nombre;
+        if (fechaEl) fechaEl.textContent = proximo.fecha;
+        if (lugarEl) lugarEl.textContent = proximo.lugar;
+
+        if (diasEl) {
+          const actualizarCuentaRegresiva = () => {
+            if (!proximo.fechaISO) {
+              diasEl.textContent = "";
+              diasEl.hidden = true;
+              return;
+            }
+
+            const ahoraActual = new Date();
+            const cuenta = calculateEventCountdown(proximo.fechaISO, ahoraActual);
+
+            if (cuenta.status === "today") {
+              diasEl.hidden = false;
+              diasEl.textContent = banner.dataset.labelHoy ?? "Hoy";
+              return;
+            }
+
+            if (cuenta.status === "expired") {
+              diasEl.textContent = "";
+              diasEl.hidden = true;
+              return;
+            }
+
+            diasEl.hidden = false;
+            const dias = cuenta.days;
+            const plantilla = dias === 1
+              ? banner.dataset.labelFaltaDia ?? "Falta {dias} día"
+              : banner.dataset.labelFaltanDias ?? "Faltan {dias} días";
+
+            diasEl.textContent = plantilla
+              .replace("{dias}", String(dias));
+          };
+
+          diasEl.hidden = false;
+          diasEl.dataset.cargando = "false";
+          diasEl.removeAttribute("aria-hidden");
+          actualizarCuentaRegresiva();
+          if (proximo.fechaISO) window.setInterval(actualizarCuentaRegresiva, 60_000);
+        }
+      } else {
+        const diasEl = banner.querySelector<HTMLElement>("[data-banner-evento-dias]");
+        if (diasEl) {
+          diasEl.dataset.cargando = "false";
+          diasEl.hidden = true;
+        }
+      }
+      banner.setAttribute("aria-busy", "false");
+    } catch (error: unknown) {
+      console.error("No se pudo actualizar el banner del próximo evento.", error);
+      const diasEl = banner.querySelector<HTMLElement>("[data-banner-evento-dias]");
+      if (diasEl) {
+        diasEl.dataset.cargando = "false";
+        diasEl.hidden = true;
+      }
+      banner.setAttribute("aria-busy", "false");
+    }
+  }
+</script>
+
+<style>
+  [data-banner-evento-dias][data-cargando="true"] {
+    color: transparent;
+    background: linear-gradient(100deg, #f3e7bd 30%, #fff8df 50%, #f3e7bd 70%);
+    background-size: 220% 100%;
+    animation: cuenta-regresiva-skeleton 1.4s ease-in-out infinite;
+  }
+
+  @keyframes cuenta-regresiva-skeleton {
+    to {
+      background-position: -220% 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-banner-evento-dias][data-cargando="true"] {
+      animation: none;
+    }
+  }
+</style>

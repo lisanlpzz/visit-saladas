@@ -1,0 +1,52 @@
+---
+import ScrollExpand from "../react/ScrollExpand.jsx";
+import portalSaladas from "../../images/portal-saladas-1920.webp";
+import portalMurales from "../../images/portal-murales-1920.webp";
+import plazaIglesia from "../../images/plaza-iglesia-1920.webp";
+import costanera from "../../images/costanera.avif";
+import solidBlack from "../../images/solid_black.webp";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const slides = [
+  { src: portalSaladas.src, alt: t("Vista panorámica de Saladas") },
+  { src: portalMurales.src, alt: t("Murales de la ciudad de Saladas") },
+  { src: plazaIglesia.src, alt: t("Iglesia de Saladas") },
+  { src: costanera.src, alt: t("Costanera de Saladas") },
+];
+---
+
+<section id="portada" class="min-h-screen bg-black text-white">
+  <ScrollExpand
+    client:load
+    slides={slides}
+    src={slides[0].src}
+    initialImage={solidBlack.src}
+    alt={slides[0].alt}
+    title={t("Saladas te espera")}
+    titleLogo="/logo.webp"
+    scrollHint={t("Deslizá para descubrir")}
+    useWindowScroll
+    scrollDistance={0.8}
+    holdDistance={0.1}
+    overlayScrim={0.82}
+  >
+    <div class="mx-auto max-w-3xl text-white">
+      <p class="mb-5 text-xs font-bold tracking-[0.22em] text-[#FFC107]">CORRIENTES · ARGENTINA</p>
+      <h1 class="mx-auto max-w-[12ch] text-balance text-[clamp(2.5rem,7vw,5.75rem)] font-bold leading-[0.98] tracking-[-0.04em]">
+        {t("Visita Saladas")}
+      </h1>
+      <p class="mx-auto mt-6 max-w-xl text-balance text-base leading-relaxed text-white/85 sm:text-xl">
+        {t("Cultura, historia y momentos inolvidables junto a la naturaleza.")}
+      </p>
+      <a
+        class="mt-8 inline-flex min-h-[3.25rem] items-center gap-6 rounded-full bg-[#FFC107] px-6 text-[0.9375rem] font-bold text-[#2a1b13] transition hover:-translate-y-0.5 hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        href="#experiencias"
+      >
+        {t("Qué hacer en Saladas")} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </ScrollExpand>
+</section>
+

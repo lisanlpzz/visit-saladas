@@ -1,0 +1,12 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioGaleria from "../../components/galeria/inicio-galeria.astro";
+import GaleriaFotos from "../../components/galeria/galeria-fotos.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Visit Saladas | Galería")} description={t("Explorá fotos de Saladas, Corrientes: paisajes, naturaleza, historia y escenas de la vida cultural de la ciudad.")}>
+  <main><InicioGaleria /><GaleriaFotos /></main>
+</Layout>

@@ -1,0 +1,14 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioNosotros from "../../components/nosotros/inicio-nosotros.astro";
+import InformacionNosotros from "../../components/nosotros/informacion-nosotros.astro";
+import Equipo from "../../components/nosotros/equipo.astro";
+import Preguntas from "../../components/nosotros/preguntas.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Nosotros | Visit Saladas")} description={t("Conocé Visit Saladas, un proyecto independiente que comparte los paisajes, la historia y la gente de Saladas, Corrientes.")}>
+  <main><InicioNosotros /><InformacionNosotros /><Equipo /><Preguntas /></main>
+</Layout>

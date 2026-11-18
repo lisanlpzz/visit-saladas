@@ -1,0 +1,46 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import DetalleEvento from "../../../components/eventos/detalle-evento.astro";
+import { obtenerEventos } from "../../../data/eventos";
+
+export function getStaticPaths() {
+  return obtenerEventos("en").map((evento) => ({
+    params: { slug: evento.slug },
+    props: { evento },
+  }));
+}
+
+const { evento } = Astro.props;
+const origenSitio = Astro.site?.origin ?? Astro.url.origin;
+const datosEvento = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: evento.nombre,
+  description: evento.resumen,
+  ...(evento.fechaISO ? { startDate: evento.fechaISO } : {}),
+  eventStatus: "https://schema.org/EventScheduled",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  image: [new URL(evento.portada.src, origenSitio).href],
+  location: {
+    "@type": "Place",
+    name: evento.lugar,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Saladas",
+      addressRegion: "Corrientes",
+      addressCountry: "AR",
+    },
+  },
+};
+---
+
+<Layout
+  title={`${evento.nombre} | Events in Saladas`}
+  description={evento.resumen}
+  image={evento.portada.src}
+  imageAlt={evento.alt}
+  ogType="article"
+  structuredData={datosEvento}
+>
+  <DetalleEvento evento={evento} idioma="en" />
+</Layout>

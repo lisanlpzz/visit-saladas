@@ -1,0 +1,74 @@
+---
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+---
+
+<section
+  class="bg-[#F9F6F0] px-5 py-16 text-[#2a1b13] sm:px-8 sm:py-24"
+  aria-labelledby="nosotros-historia-title"
+>
+  <div class="mx-auto max-w-7xl">
+    <div class="grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:gap-20">
+      <div>
+        <h2
+          id="nosotros-historia-title"
+          class="max-w-[16ch] text-balance text-3xl font-extrabold leading-tight tracking-[-0.045em] sm:text-4xl"
+        >
+          {t("Creemos que para descubrir un lugar, primero hay que sentirlo.")}
+        </h2>
+      </div>
+      <div class="space-y-5 text-base leading-relaxed text-[#2a1b13]/75 sm:text-lg">
+        <p>
+          <strong class="font-bold text-[#2a1b13]">Visit Saladas</strong> {t("nace para visibilizar")}
+          {t("todo lo que nuestra ciudad tiene para ofrecer: su historia, su naturaleza, sus costumbres y, sobre todo, su gente.")}
+        </p>
+        <p>
+          {t("Queremos conectar a quienes nos visitan con la identidad local, y a los saladeños con el valor de lo que nos rodea cada día.")}
+        </p>
+        <p>
+          {t("A través de imágenes, relatos y recomendaciones, compartimos una mirada cercana y auténtica de Saladas: esa que se descubre caminando sus calles, escuchando sus historias y disfrutando de su naturaleza.")}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section
+  class="bg-[#1E3A2F] px-5 py-16 text-[#F9F6F0] sm:px-8 sm:py-24"
+  aria-labelledby="nosotros-esencia-title"
+>
+  <div class="mx-auto max-w-7xl">
+    <div class="grid gap-8 border-b border-[#F9F6F0]/15 pb-10 md:grid-cols-[0.8fr_1.2fr] md:gap-20 md:pb-12">
+      <div>
+        <h2
+          id="nosotros-esencia-title"
+          class="text-4xl font-extrabold tracking-[-0.045em] sm:text-5xl"
+        >
+          {t("Nuestra esencia")}
+        </h2>
+      </div>
+      <p class="max-w-2xl text-base leading-relaxed text-[#F9F6F0]/75 sm:text-lg">
+        {t("Tenemos un propósito compartido: que Saladas se conozca, se valore y se viva. Creemos en el potencial de nuestra ciudad y en el valor de contar sus historias desde adentro.")}
+      </p>
+    </div>
+
+    <div class="grid gap-10 pt-9 md:grid-cols-2 md:gap-20 md:pt-12">
+      <article>
+        <h3 class="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">
+          {t("Un destino que deja huella")}
+        </h3>
+        <p class="mt-4 max-w-xl text-sm leading-relaxed text-[#F9F6F0]/75 sm:text-base">
+          {t("Soñamos con posicionar a Saladas como un destino auténtico y memorable, donde la historia, la naturaleza y la cultura se entrelazan para ofrecer experiencias únicas.")}
+        </p>
+      </article>
+      <article class="border-[#F9F6F0]/15 md:border-l md:pl-10">
+        <h3 class="mt-4 text-2xl font-bold tracking-tight sm:text-3xl">{t("Impulsar lo nuestro")}</h3>
+        <p class="mt-4 max-w-xl text-sm leading-relaxed text-[#F9F6F0]/75 sm:text-base">
+          {t("Promovemos el turismo local con contenido visual de calidad y buscamos generar oportunidades para emprendedores, prestadores y toda la comunidad.")}
+        </p>
+      </article>
+    </div>
+  </div>
+</section>

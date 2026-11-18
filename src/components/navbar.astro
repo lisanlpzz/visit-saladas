@@ -1,0 +1,333 @@
+---
+import { localizarRuta, obtenerIdioma, traducir } from "../i18n";
+import Bandera from "./idioma/bandera.astro";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const opcionesIdioma = [
+  { codigo: "es" as const, nombre: "Español" },
+  { codigo: "en" as const, nombre: "English" },
+  { codigo: "pt-br" as const, nombre: "Português (Brasil)" },
+];
+const nombreIdiomaActual = opcionesIdioma.find((opcion) => opcion.codigo === idioma)!.nombre;
+const esPagina404 = /(?:^|\/)404(?:\.html)?\/?$/.test(Astro.url.pathname);
+const localizarOpcionIdioma = (codigo: (typeof opcionesIdioma)[number]["codigo"]) =>
+  esPagina404
+    ? codigo === "es"
+      ? "/404.html"
+      : localizarRuta("/404/", codigo)
+    : localizarRuta(Astro.url.pathname, codigo);
+---
+
+<nav class="fixed inset-x-0 top-0 z-20 bg-transparent opacity-0 transition-[opacity,transform,background-color,box-shadow,backdrop-filter] duration-300" style="transform: translateY(-0.5rem); pointer-events: none;" inert data-site-navbar>
+  <div class="mx-auto flex w-full max-w-screen-xl flex-wrap items-center justify-between p-4 xl:flex-nowrap">
+    <a href={localizarRuta("/", idioma)} class="flex shrink-0 items-center" aria-label={t("Visit Saladas, inicio")}>
+      <span class="relative grid size-11 place-items-center" data-navbar-logo-mark>
+        <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-full border border-[#FFC107]/0" data-navbar-logo-ring></span>
+        <img src="/logo.webp" class="h-10 w-10 object-contain" alt="" data-navbar-logo />
+      </span>
+    </a>
+
+    <div class="flex shrink-0 items-center gap-2 xl:order-2 xl:gap-3">
+      <details class="relative" data-language-dropdown>
+        <summary
+          class="flex h-11 cursor-pointer list-none items-center rounded-full border border-white/30 bg-black/25 px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107] sm:px-4"
+          aria-label={t("Cambiar idioma")}
+        >
+          <span class="flex items-center gap-2">
+            <Bandera codigo={idioma} />
+            <span class="whitespace-nowrap">{nombreIdiomaActual}</span>
+          </span>
+        </summary>
+        <div class="absolute right-0 top-full z-30 mt-2 grid min-w-44 gap-1 rounded-xl border border-[#2a1b13]/10 bg-[#F9F6F0] p-2 text-[#2a1b13] shadow-lg">
+          {opcionesIdioma.map((opcion) => (
+            <a
+              href={localizarOpcionIdioma(opcion.codigo)}
+              aria-current={idioma === opcion.codigo ? "page" : undefined}
+              class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-[#1E3A2F]/10 focus-visible:outline-2 focus-visible:outline-[#B34D36]"
+            >
+              <Bandera codigo={opcion.codigo} />
+              <span class="flex-1">{opcion.nombre}</span>
+            </a>
+          ))}
+        </div>
+      </details>
+      <a
+        href={localizarRuta("/un-dia-en-saladas/", idioma)}
+        class="hidden h-11 items-center whitespace-nowrap rounded-full bg-[#FFC107] px-4 text-sm font-semibold leading-6 text-[#1E3A2F] shadow-sm transition-[transform,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-[#e0a800] hover:shadow-md focus:outline-none focus:ring-4 focus:ring-[#B34D36] xl:inline-flex sm:h-12 sm:px-5 sm:text-base"
+      >
+        {t("Un día en Saladas")}
+      </a>
+      <button
+        type="button"
+        class="inline-flex size-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107] xl:hidden"
+        aria-label={t("Abrir menú")}
+        aria-controls="navbar-sticky"
+        aria-expanded="false"
+        data-navbar-toggle
+      >
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" data-menu-icon>
+          <path d="M5 7h14M5 12h14M5 17h14" />
+        </svg>
+        <svg class="hidden size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" data-close-icon>
+          <path d="m7 7 10 10M17 7 7 17" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="mt-3 hidden max-h-[calc(100dvh-5rem)] w-full overflow-y-auto rounded-xl border border-white/15 bg-[#1E3A2F] p-3 shadow-lg xl:order-1 xl:mt-0 xl:flex xl:max-h-none xl:w-auto xl:overflow-visible xl:rounded-none xl:border-0 xl:bg-transparent xl:p-0 xl:shadow-none" id="navbar-sticky" data-navbar-menu data-lenis-prevent>
+      <ul class="grid grid-cols-1 gap-1 font-medium sm:grid-cols-2 xl:flex xl:flex-row xl:items-center xl:gap-1.5 2xl:gap-3">
+        <li>
+          <a href={localizarRuta("/", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Inicio")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/galeria", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Galería")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/mapa", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Mapa")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/eventos", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Eventos")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/nosotros", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Nosotros")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/contacto", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Contacto")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/transporte", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Transporte")}</a>
+        </li>
+        <li>
+          <a href={localizarRuta("/alojamientos", idioma)} data-navbar-link class="inline-flex min-h-11 w-full items-center whitespace-nowrap rounded-md px-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFC107] xl:min-h-12 xl:w-auto">{t("Alojamientos")}</a>
+        </li>
+      </ul>
+      <a
+        href={localizarRuta("/un-dia-en-saladas/", idioma)}
+        class="mt-3 flex min-h-13 items-center justify-center rounded-2xl bg-[#FFC107] px-5 text-center text-base font-extrabold text-black shadow-md transition-[transform,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:bg-[#e0a800] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F9F6F0] xl:hidden"
+        data-mobile-feature-link
+      >
+        {t("Un día en Saladas")}
+      </a>
+      <nav class="mt-3 flex items-center justify-center gap-2 border-t border-white/15 pt-3 xl:hidden" aria-label={t("Redes sociales")}>
+        <a href="https://www.instagram.com/visitsaladas/" target="_blank" rel="noopener noreferrer" aria-label={t("Visit Saladas en Instagram")} class="grid size-9 place-items-center rounded-full border border-white/20 text-white/85 transition-colors hover:border-[#FFC107] hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107]">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 fill-none stroke-current" stroke-width="1.7">
+            <rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" class="fill-current stroke-none" />
+          </svg>
+        </a>
+        <a href="https://www.facebook.com/people/Visit-Saladas/61567853420030/" target="_blank" rel="noopener noreferrer" aria-label={t("Visit Saladas en Facebook")} class="grid size-9 place-items-center rounded-full border border-white/20 text-white/85 transition-colors hover:border-[#FFC107] hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107]">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 fill-current">
+            <path d="M13.5 21v-8.2h2.8l.4-3.2h-3.2v-2c0-.9.3-1.6 1.6-1.6h1.7V3.1c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v2.1H7v3.2h2.8V21h3.7Z" />
+          </svg>
+        </a>
+        <a href="https://www.tiktok.com/@visitsaladas" target="_blank" rel="noopener noreferrer" aria-label={t("Visit Saladas en TikTok")} class="grid size-9 place-items-center rounded-full border border-white/20 text-white/85 transition-colors hover:border-[#FFC107] hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107]">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 fill-current">
+            <path d="M19.6 7.2a6.7 6.7 0 0 1-4.1-1.4v8.1a6.1 6.1 0 1 1-5.3-6.1v3.3a2.9 2.9 0 1 0 2.1 2.8V2.5h3.2c.2 2.2 1.8 4 4.1 4.3v.4Z" />
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/@visitsaladas" target="_blank" rel="noopener noreferrer" aria-label={t("Visit Saladas en YouTube")} class="grid size-9 place-items-center rounded-full border border-white/20 text-white/85 transition-colors hover:border-[#FFC107] hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107]">
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="size-4 fill-current">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" />
+          </svg>
+        </a>
+      </nav>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const inicializarFondoNavegacion = () => {
+    const barraNavegacion = document.querySelector<HTMLElement>("[data-site-navbar]")!;
+    const logotipo = barraNavegacion.querySelector<HTMLImageElement>("[data-navbar-logo]")!;
+    const portada = document.getElementById("portada");
+    const recorridoDesplazamiento = portada?.querySelector<HTMLElement>("[data-scroll-expand-track]");
+    const escenarioDesplazamiento = portada?.querySelector<HTMLElement>("[data-scroll-expand-stage]");
+
+    const enlaces = Array.from(barraNavegacion.querySelectorAll<HTMLElement>("[data-navbar-link]"));
+    const menu = barraNavegacion.querySelector<HTMLElement>("[data-navbar-menu]")!;
+    const botonMenu = barraNavegacion.querySelector<HTMLButtonElement>("[data-navbar-toggle]")!;
+    const selectorIdioma = barraNavegacion.querySelector<HTMLDetailsElement>("[data-language-dropdown]");
+    const enlaceDestacadoMovil =
+      barraNavegacion.querySelector<HTMLAnchorElement>("[data-mobile-feature-link]")!;
+    const iconoMenu = botonMenu.querySelector<HTMLElement>("[data-menu-icon]")!;
+    const iconoCerrar = botonMenu.querySelector<HTMLElement>("[data-close-icon]")!;
+    const vistaMovil = window.matchMedia("(max-width: 1279px)");
+    let menuAbierto = false;
+    let ocultarAlDesplazarseEnMovil = false;
+    let ultimoDesplazamientoY = window.scrollY;
+    let animacionLogoIniciada = false;
+
+    const establecerMenuAbierto = (abierto: boolean) => {
+      menuAbierto = abierto && vistaMovil.matches;
+      if (menuAbierto && selectorIdioma?.open) {
+        selectorIdioma.open = false;
+      }
+      menu.classList.toggle("hidden", !menuAbierto);
+      botonMenu.setAttribute("aria-expanded", String(menuAbierto));
+      botonMenu.setAttribute("aria-label", menuAbierto ? "Cerrar menú" : "Abrir menú");
+      iconoMenu.classList.toggle("hidden", menuAbierto);
+      iconoCerrar.classList.toggle("hidden", !menuAbierto);
+      if (menuAbierto) {
+        enlaces[0]!.focus();
+      }
+      actualizarFondo();
+    };
+
+    const actualizarFondo = () => {
+      let visibilidad = 1;
+
+      if (portada && recorridoDesplazamiento && escenarioDesplazamiento) {
+        const distanciaDesplazamiento = Number(recorridoDesplazamiento.dataset.scrollDistance);
+        const alturaEscenario = escenarioDesplazamiento.clientHeight;
+        const progresoDesplazamiento = Math.min(
+          1,
+          Math.max(
+            0,
+            -recorridoDesplazamiento.getBoundingClientRect().top
+              / (alturaEscenario * distanciaDesplazamiento),
+          ),
+        );
+        const progresoVisibilidad = Math.min(
+          1,
+          Math.max(0, (progresoDesplazamiento - 0.58) / (0.9 - 0.58)),
+        );
+        visibilidad = progresoVisibilidad * progresoVisibilidad * (3 - 2 * progresoVisibilidad);
+      }
+
+      barraNavegacion.style.opacity = String(visibilidad);
+      const portadaSuperada = portada ? portada.getBoundingClientRect().bottom <= 0 : true;
+      const ocultarPorDesplazamiento =
+        vistaMovil.matches && portadaSuperada && ocultarAlDesplazarseEnMovil && !menuAbierto;
+      barraNavegacion.style.transform = ocultarPorDesplazamiento
+        ? "translateY(-110%)"
+        : `translateY(${(1 - visibilidad) * -0.5}rem)`;
+      barraNavegacion.style.pointerEvents =
+        visibilidad >= 0.98 && !ocultarPorDesplazamiento ? "auto" : "none";
+      barraNavegacion.toggleAttribute("inert", visibilidad < 0.98 || ocultarPorDesplazamiento);
+
+      barraNavegacion.dataset.overHero = String(portadaSuperada);
+
+      const fondoMenuMovil = vistaMovil.matches && menuAbierto;
+      const fondoClaro = portadaSuperada && !fondoMenuMovil;
+      barraNavegacion.classList.toggle("bg-transparent", !fondoClaro && !fondoMenuMovil);
+      barraNavegacion.classList.toggle("bg-[#F9F6F0]/85", fondoClaro);
+      barraNavegacion.classList.toggle("bg-[#1E3A2F]", fondoMenuMovil);
+      barraNavegacion.classList.toggle("backdrop-blur-xl", fondoClaro);
+      barraNavegacion.classList.toggle("shadow-sm", fondoClaro);
+      logotipo.classList.toggle("brightness-0", portadaSuperada);
+      botonMenu.classList.toggle("text-white", !portadaSuperada || fondoMenuMovil);
+      botonMenu.classList.toggle("text-[#2a1b13]", portadaSuperada && !fondoMenuMovil);
+
+      enlaces.forEach((enlace) => {
+        const menuClaro = portadaSuperada && !(menuAbierto && vistaMovil.matches);
+        enlace.classList.toggle("text-[#2a1b13]", menuClaro);
+        enlace.classList.toggle(
+          "text-white/90",
+          !menuClaro && enlace.getAttribute("aria-current") !== "page",
+        );
+        enlace.classList.toggle(
+          "text-[#FFC107]",
+          !menuClaro && enlace.getAttribute("aria-current") === "page",
+        );
+      });
+
+      if (!animacionLogoIniciada && visibilidad >= 0.98) {
+        animacionLogoIniciada = true;
+        barraNavegacion.dataset.logoAnimacion = "true";
+        window.setTimeout(() => delete barraNavegacion.dataset.logoAnimacion, 1500);
+      }
+    };
+
+    botonMenu.addEventListener("click", () => establecerMenuAbierto(!menuAbierto));
+    enlaces.forEach((enlace) =>
+      enlace.addEventListener("click", () => establecerMenuAbierto(false)),
+    );
+    document.addEventListener("click", (event) => {
+      const objetivo = event.target;
+      if (!(objetivo instanceof Node)) return;
+      if (selectorIdioma?.open && !selectorIdioma.contains(objetivo)) {
+        selectorIdioma.open = false;
+      }
+      if (menuAbierto && !barraNavegacion.contains(objetivo)) {
+        establecerMenuAbierto(false);
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        if (selectorIdioma?.open) {
+          selectorIdioma.open = false;
+          selectorIdioma.querySelector("summary")?.focus();
+        }
+        if (menuAbierto) {
+          establecerMenuAbierto(false);
+          botonMenu.focus();
+        }
+      }
+    });
+    enlaceDestacadoMovil.addEventListener("click", () => establecerMenuAbierto(false));
+    vistaMovil.addEventListener("change", (evento) => {
+      if (!evento.matches && menuAbierto) establecerMenuAbierto(false);
+      ocultarAlDesplazarseEnMovil = false;
+      ultimoDesplazamientoY = window.scrollY;
+      actualizarFondo();
+    });
+
+    window.addEventListener("scroll", () => {
+      const desplazamientoY = window.scrollY;
+      const variacionDesplazamiento = desplazamientoY - ultimoDesplazamientoY;
+      if (vistaMovil.matches && Math.abs(variacionDesplazamiento) > 6) {
+        ocultarAlDesplazarseEnMovil = desplazamientoY > 80 && variacionDesplazamiento > 0;
+        ultimoDesplazamientoY = desplazamientoY;
+      } else if (desplazamientoY <= 80) {
+        ocultarAlDesplazarseEnMovil = false;
+        ultimoDesplazamientoY = desplazamientoY;
+      }
+      actualizarFondo();
+    }, { passive: true });
+    window.addEventListener("pageshow", actualizarFondo);
+    actualizarFondo();
+  };
+
+  inicializarFondoNavegacion();
+</script>
+
+<style>
+  [data-navbar-logo-ring] {
+    opacity: 0;
+  }
+
+  [data-site-navbar][data-logo-animacion="true"] [data-navbar-logo-ring] {
+    animation: navbar-logo-brillo 1.4s ease-out both;
+  }
+
+  @keyframes navbar-logo-brillo {
+    0% {
+      opacity: 0;
+      transform: scale(0.82);
+      border-color: transparent;
+      box-shadow: 0 0 0 rgba(255, 193, 7, 0);
+    }
+    35% {
+      opacity: 0.7;
+      transform: scale(1);
+      border-color: rgba(255, 193, 7, 0.7);
+      box-shadow: 0 0 16px rgba(255, 193, 7, 0.28);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.16);
+      border-color: rgba(255, 193, 7, 0);
+      box-shadow: 0 0 20px rgba(255, 193, 7, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-site-navbar] {
+      transition-duration: 0ms;
+    }
+
+    [data-navbar-logo-ring] {
+      animation: none;
+    }
+  }
+</style>

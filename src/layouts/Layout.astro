@@ -1,0 +1,200 @@
+---
+import "../styles/global.css";
+import CargaInicial from "../components/carga-inicial.astro";
+import Footer from "../components/footer.astro";
+import Navbar from "../components/navbar.astro";
+import WhatsAppFlotante from "../components/whatsapp-flotante.astro";
+import imagenSocialPorDefecto from "../images/portal-saladas-1920.webp";
+import { localizarRuta, obtenerIdioma, traducir, type Idioma } from "../i18n";
+
+interface Props {
+  title: string;
+  description?: string;
+  showLoader?: boolean;
+  hideScrollbar?: boolean;
+  image?: string;
+  imageAlt?: string;
+  ogType?: "website" | "article";
+  noindex?: boolean;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const {
+  title,
+  description,
+  showLoader = false,
+  hideScrollbar = false,
+  image,
+  imageAlt,
+  ogType = "website",
+  noindex = false,
+  structuredData,
+} = Astro.props;
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const atributoIdioma = idioma === "pt-br" ? "pt-BR" : idioma;
+const esPagina404 = /(?:^|\/)404(?:\.html)?\/?$/.test(Astro.url.pathname);
+const origenSitio = Astro.site?.origin ?? Astro.url.origin;
+const urlCanonica = new URL(Astro.url.pathname, origenSitio).href;
+
+const descripcionSocial =
+  description ??
+  traducir(
+    "Descubrí Saladas, Corrientes: sus paisajes, historia, cultura y experiencias para planificar tu próxima visita.",
+    idioma,
+  );
+const urlImagenSocial = new URL(image ?? imagenSocialPorDefecto.src, origenSitio).href;
+const altImagenSocial = imageAlt ?? traducir("Vista panorámica de Saladas", idioma);
+
+const mapaLocaleOg: Record<Idioma, string> = {
+  es: "es_AR",
+  en: "en_US",
+  "pt-br": "pt_BR",
+};
+const localeOgActual = mapaLocaleOg[idioma];
+const localesOgAlternativos = (Object.keys(mapaLocaleOg) as Idioma[])
+  .filter((codigo) => codigo !== idioma)
+  .map((codigo) => mapaLocaleOg[codigo]);
+
+const enlacesAlternativosIdioma = esPagina404
+  ? []
+  : [
+      { hreflang: "es", href: new URL(localizarRuta(Astro.url.pathname, "es"), origenSitio).href },
+      { hreflang: "en", href: new URL(localizarRuta(Astro.url.pathname, "en"), origenSitio).href },
+      { hreflang: "pt-BR", href: new URL(localizarRuta(Astro.url.pathname, "pt-br"), origenSitio).href },
+      { hreflang: "x-default", href: new URL(localizarRuta(Astro.url.pathname, "es"), origenSitio).href },
+    ];
+
+const datosEstructuradosBase: Record<string, unknown>[] = [
+  {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    name: "Saladas, Corrientes",
+    description: descripcionSocial,
+    url: urlCanonica,
+    image: urlImagenSocial,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Saladas",
+      addressRegion: "Corrientes",
+      addressCountry: "AR",
+    },
+    sameAs: [
+      "https://www.instagram.com/visitsaladas/",
+      "https://www.facebook.com/people/Visit-Saladas/61567853420030/",
+      "https://www.tiktok.com/@visitsaladas",
+      "https://www.youtube.com/@visitsaladas",
+    ],
+  },
+];
+
+const bloquesJsonLd = structuredData
+  ? [
+      ...datosEstructuradosBase,
+      ...(Array.isArray(structuredData) ? structuredData : [structuredData]),
+    ]
+  : datosEstructuradosBase;
+---
+
+<html lang={atributoIdioma} class:list={{ "hide-scrollbar": hideScrollbar }}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1E3A2F" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TJXH7FN6QD"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){window.dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TJXH7FN6QD');
+    </script>
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KZPGQ3QP');
+    </script>
+    <meta
+      name="robots"
+      content={esPagina404 || noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large"}
+    />
+    {description && <meta name="description" content={description} />}
+    <title>{title}</title>
+
+    {!esPagina404 && <link rel="canonical" href={urlCanonica} />}
+    {
+      enlacesAlternativosIdioma.map((enlace) => (
+        <link rel="alternate" hreflang={enlace.hreflang} href={enlace.href} />
+      ))
+    }
+
+    <!-- Open Graph / WhatsApp / Facebook / Instagram -->
+    <meta property="og:site_name" content="Visit Saladas" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={descripcionSocial} />
+    <meta property="og:url" content={urlCanonica} />
+    <meta property="og:image" content={urlImagenSocial} />
+    <meta property="og:image:alt" content={altImagenSocial} />
+    <meta property="og:locale" content={localeOgActual} />
+    {
+      localesOgAlternativos.map((localeAlt) => (
+        <meta property="og:locale:alternate" content={localeAlt} />
+      ))
+    }
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={descripcionSocial} />
+    <meta name="twitter:image" content={urlImagenSocial} />
+    <meta name="twitter:image:alt" content={altImagenSocial} />
+
+    {
+      !esPagina404 &&
+        bloquesJsonLd.map((bloque) => (
+          <script
+            type="application/ld+json"
+            is:inline
+            set:html={JSON.stringify(bloque).replace(/</g, "\\u003c")}
+          />
+        ))
+    }
+
+    <slot name="head" />
+  </head>
+  <body>
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KZPGQ3QP"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe>
+    </noscript>
+    {showLoader && <CargaInicial />}
+    <Navbar />
+    <slot />
+    <Footer />
+    <WhatsAppFlotante />
+    <script>
+      import Lenis from "lenis";
+
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+
+      if (!reducedMotion && !coarsePointer) {
+        const lenis = new Lenis({ lerp: 0.09, smoothWheel: true, anchors: true });
+
+        const raf = (time: number) => {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        };
+
+        requestAnimationFrame(raf);
+      }
+    </script>
+  </body>
+</html>

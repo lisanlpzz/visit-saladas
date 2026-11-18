@@ -1,0 +1,13 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioMapa from "../../components/mapa/inicio-mapa.astro";
+import MapaInteractivo from "../../components/mapa/mapa-interactivo.astro";
+import AgregarPuntos from "../../components/mapa/agregar-puntos.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Visit Saladas | Mapa")} description={t("Ubicá atractivos, sitios de interés y servicios útiles en Saladas con el mapa turístico de la ciudad.")}>
+  <main><InicioMapa /><MapaInteractivo /><AgregarPuntos /></main>
+</Layout>

@@ -1,0 +1,12 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioEvento from "../../components/eventos/inicio-evento.astro";
+import EventosCard from "../../components/eventos/eventos-card.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Eventos | Visit Saladas")} description={t("Conocé las fiestas, celebraciones y eventos culturales de Saladas, Corrientes, y descubrí sus tradiciones.")}>
+  <main><InicioEvento /><EventosCard /></main>
+</Layout>

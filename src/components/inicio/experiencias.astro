@@ -1,0 +1,237 @@
+---
+import { obtenerExperiencias } from "../../data/experiencias";
+import { localizarRuta, obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const experiences = obtenerExperiencias(idioma);
+---
+<section
+  class="scroll-mt-20 border-t border-[#1E3A2F]/10 bg-[#EEF2EC] px-5 py-20 text-[#2a1b13] sm:px-8 sm:py-28"
+  id="experiencias"
+  aria-labelledby="experiencias-title"
+>
+  <div class="mx-auto max-w-7xl" data-experience-reveal>
+    <h2
+      class="mb-0 max-w-[14ch] text-balance text-4xl font-extrabold leading-[1.04] tracking-[-0.035em] sm:text-5xl"
+      id="experiencias-title"
+    >
+      {t("Descubrí experiencias únicas")}
+    </h2>
+    <span aria-hidden="true" class="mb-8 mt-4 block h-[3px] w-12 rounded-full bg-[#FFC107] sm:mb-10"></span>
+    <div class="flex flex-col gap-3 min-[56rem]:h-[min(34rem,72vh)] min-[56rem]:flex-row min-[56rem]:gap-4" data-experience-panels>
+      {experiences.map((experience, index) => {
+        const initiallyOpen = index === 0;
+        const bodyId = `experiencia-${experience.id}`;
+
+        return (
+          <article
+            class:list={[
+              "group relative isolate z-0 flex min-h-24 flex-col justify-end overflow-hidden rounded-3xl bg-[#5b5144] text-white shadow-[0_18px_50px_rgba(48,34,17,0.14)] ring-1 ring-inset ring-white/15 transition-[min-height,flex-grow,transform,box-shadow] duration-300 ease-in-out hover:z-10 hover:scale-[1.02] hover:shadow-[0_28px_64px_rgba(48,34,17,0.26)] motion-reduce:transform-none motion-reduce:transition-none min-[56rem]:min-h-0 min-[56rem]:flex-[1_1_0%] min-[56rem]:justify-start min-[56rem]:transition-[flex-grow,transform,box-shadow] min-[56rem]:duration-300",
+              initiallyOpen && "min-h-[26rem]",
+            ]}
+            data-experience-panel
+            data-open={initiallyOpen ? "true" : "false"}
+          >
+            <img
+              class="absolute inset-0 z-0 h-full w-full object-cover brightness-75 saturate-75"
+              src={experience.photo.src}
+              alt={experience.alt}
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/95 via-black/55 to-black/25 transition-opacity duration-500 ease-in-out group-hover:opacity-95"></div>
+            <h3 class="relative z-20 mt-auto shrink-0 text-2xl font-bold leading-[1.05] drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl min-[56rem]:mt-0 min-[56rem]:text-[clamp(1.7rem,1.2rem+1.3vw,2.5rem)]">
+              <button
+                class="block w-full rounded-3xl px-[1.6rem] py-[1.4rem] text-left leading-[1.05] transition-colors duration-300 hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-[-6px] focus-visible:outline-[#FFC107] min-[56rem]:p-8"
+                type="button"
+                aria-expanded={initiallyOpen ? "true" : "false"}
+                aria-controls={bodyId}
+                data-experience-toggle
+                data-open={initiallyOpen ? "true" : "false"}
+              >
+                {experience.title}
+              </button>
+            </h3>
+
+            <div
+              class="pointer-events-none relative z-20 grid grid-rows-[0fr] transition-[grid-template-rows] duration-600 ease-in-out motion-reduce:transition-none min-[56rem]:absolute min-[56rem]:inset-x-0 min-[56rem]:bottom-0 min-[56rem]:block min-[56rem]:grid-rows-none"
+              id={bodyId}
+              aria-hidden={initiallyOpen ? "false" : "true"}
+              data-experience-body
+              data-open={initiallyOpen ? "true" : "false"}
+            >
+              <div
+                class="min-h-0 overflow-hidden px-[1.6rem] pb-0 opacity-0 transition-[opacity,padding] duration-400 ease-in-out sm:px-8 min-[56rem]:px-8 min-[56rem]:pb-8"
+                data-experience-body-inner
+                data-open={initiallyOpen ? "true" : "false"}
+              >
+                <p class="mb-5 max-w-[32ch] text-base leading-[1.55] text-white/95 [text-shadow:0_1px_10px_rgba(0,0,0,0.35)] sm:text-lg">
+                  {experience.description}
+                </p>
+                <a
+                  class="group/cta inline-flex min-h-12 items-center gap-3 rounded-full bg-[#FFC107] px-7 text-sm font-bold text-[#291b12] shadow-[0_6px_20px_rgba(0,0,0,0.18)] transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#e0a800] hover:shadow-[0_10px_24px_rgba(0,0,0,0.22)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                  href={localizarRuta(experience.href, idioma)}
+                  tabindex={initiallyOpen ? 0 : -1}
+                >
+                  {experience.cta}
+                  <span aria-hidden="true" class="transition-transform duration-300 group-hover/cta:translate-x-1">→</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<script>
+  const initializeExperiencePanels = () => {
+    document.querySelectorAll<HTMLElement>("[data-experience-panels]").forEach((group) => {
+      if (group.dataset.initialized === "true") return;
+      group.dataset.initialized = "true";
+
+      const panels = Array.from(group.querySelectorAll<HTMLElement>("[data-experience-panel]"));
+      const desktop = window.matchMedia("(min-width: 56rem)");
+      const setOpenPanel = (selectedPanel: HTMLElement) => {
+        panels.forEach((panel) => {
+          const isOpen = panel === selectedPanel;
+          panel.dataset.open = String(isOpen);
+          panel.style.minHeight = desktop.matches ? "0" : isOpen ? "26rem" : "6rem";
+          panel.style.flexGrow = isOpen ? "3.4" : "1";
+          panel.style.flexBasis = desktop.matches ? "0%" : "";
+
+          const heading = panel.querySelector<HTMLElement>("h3");
+          if (heading) {
+            heading.style.fontSize = desktop.matches
+              ? isOpen ? "clamp(1.7rem, 1.2rem + 1.3vw, 2.5rem)" : "clamp(1.25rem, 1rem + 0.6vw, 1.55rem)"
+              : "";
+            heading.classList.toggle("min-[56rem]:flex-1", desktop.matches && !isOpen);
+            heading.classList.toggle("min-[56rem]:min-h-0", desktop.matches && !isOpen);
+          }
+
+          const toggle = panel.querySelector<HTMLButtonElement>("[data-experience-toggle]");
+          if (toggle) {
+            toggle.setAttribute("aria-expanded", String(isOpen));
+            toggle.classList.toggle("min-[56rem]:flex", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:items-end", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:h-full", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:whitespace-nowrap", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:px-[1.4rem]", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:py-8", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:[writing-mode:vertical-rl]", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:rotate-180", desktop.matches && !isOpen);
+            toggle.classList.toggle("min-[56rem]:max-w-[14ch]", desktop.matches && isOpen);
+            toggle.style.writingMode = desktop.matches && !isOpen ? "vertical-rl" : "";
+            toggle.style.transform = desktop.matches && !isOpen ? "rotate(180deg)" : "";
+            toggle.style.alignItems = desktop.matches && !isOpen ? "flex-end" : "";
+            toggle.style.justifyContent = desktop.matches && !isOpen ? "flex-start" : "";
+          }
+
+          const body = panel.querySelector<HTMLElement>("[data-experience-body]");
+          if (body) {
+            body.setAttribute("aria-hidden", String(!isOpen));
+            body.classList.toggle("pointer-events-auto", isOpen);
+            body.classList.toggle("pointer-events-none", !isOpen);
+            body.classList.toggle("grid-rows-[1fr]", isOpen && !desktop.matches);
+            body.classList.toggle("grid-rows-[0fr]", !isOpen && !desktop.matches);
+          }
+
+          const bodyInner = panel.querySelector<HTMLElement>("[data-experience-body-inner]");
+          if (bodyInner) {
+            bodyInner.classList.toggle("opacity-100", isOpen);
+            bodyInner.classList.toggle("opacity-0", !isOpen);
+            bodyInner.classList.toggle("pb-7", isOpen && !desktop.matches);
+            bodyInner.classList.toggle("pb-0", !isOpen && !desktop.matches);
+          }
+
+          const action = body?.querySelector<HTMLAnchorElement>("a");
+          action?.setAttribute("tabindex", isOpen ? "0" : "-1");
+        });
+      };
+
+      const initiallyOpen = panels.find((panel) => panel.dataset.open === "true") ?? panels[0];
+      if (initiallyOpen) setOpenPanel(initiallyOpen);
+
+      group.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const button = target.closest<HTMLButtonElement>("[data-experience-toggle]");
+        const panel = button?.closest<HTMLElement>("[data-experience-panel]");
+        if (panel) setOpenPanel(panel);
+      });
+
+      desktop.addEventListener("change", () => {
+        const opened = panels.find((panel) => panel.dataset.open === "true") ?? panels[0];
+        if (opened) setOpenPanel(opened);
+      });
+
+      panels.forEach((panel) => {
+        panel.addEventListener("pointerenter", (event) => {
+          if (event.pointerType === "mouse" && desktop.matches) setOpenPanel(panel);
+        });
+      });
+    });
+  };
+
+  initializeExperiencePanels();
+  document.addEventListener("astro:page-load", initializeExperiencePanels);
+
+  const initializeExperienceReveal = () => {
+    document.querySelectorAll<HTMLElement>("[data-experience-reveal]").forEach((section) => {
+      if (section.dataset.revealInitialized === "true") return;
+      section.dataset.revealInitialized = "true";
+
+      if (!("IntersectionObserver" in window)) {
+        section.dataset.experienceReveal = "visible";
+        return;
+      }
+
+      const bounds = section.getBoundingClientRect();
+      const alreadyVisible = bounds.top < window.innerHeight && bounds.bottom > 0;
+      if (alreadyVisible) {
+        section.dataset.experienceReveal = "visible";
+        return;
+      }
+
+      section.dataset.experienceReveal = "pending";
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry?.isIntersecting) return;
+        section.dataset.experienceReveal = "visible";
+        observer.unobserve(section);
+      }, { threshold: 0.05 });
+
+      observer.observe(section);
+    });
+  };
+
+  initializeExperienceReveal();
+  document.addEventListener("astro:page-load", initializeExperienceReveal);
+</script>
+
+<style>
+  [data-experience-reveal="pending"] {
+    opacity: 0;
+    transform: translate3d(-1rem, 0, 0);
+    will-change: opacity, transform;
+  }
+
+  [data-experience-reveal="visible"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 900ms ease-out,
+      transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-experience-reveal="pending"],
+    [data-experience-reveal="visible"] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

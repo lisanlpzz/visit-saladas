@@ -1,0 +1,185 @@
+---
+import { Image } from "astro:assets";
+import { obtenerItinerarioDia } from "../../data/itinerario-dia";
+import { localizarRuta, obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const { cierre: cierreItinerario, momentos: itinerarioDia } = obtenerItinerarioDia(idioma);
+---
+
+<section
+  id="recorrido"
+  class="scroll-mt-24 bg-[#F9F6F0] px-5 py-16 text-[#1E3A2F] sm:px-8 sm:py-24 lg:py-28"
+  aria-labelledby="recorrido-title"
+>
+  <div class="mx-auto max-w-7xl">
+    <header class="grid gap-8 border-b border-[#1E3A2F]/15 pb-9 sm:pb-12 lg:grid-cols-[1fr_auto] lg:items-end">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="h-px w-10 bg-[#B34D36]"></span>
+        </div>
+
+        <h2
+          id="recorrido-title"
+          class="mt-5 text-balance text-4xl font-semibold tracking-[-0.045em] sm:text-5xl lg:text-7xl"
+        >
+          {t("El recorrido")}
+        </h2>
+
+      </div>
+
+      <nav aria-label={t("Paradas del recorrido")} class="lg:pb-1">
+        <ol class="flex flex-wrap gap-2">
+          {itinerarioDia.map((momento, indice) => (
+            <li>
+              <a
+                href={`#parada-${indice + 1}`}
+                class="group/link inline-flex min-h-11 items-center gap-3 rounded-full border border-[#B34D36]/35 bg-white/65 px-4 text-sm font-medium text-[#1E3A2F] transition-all duration-300 hover:border-[#B34D36] hover:bg-[#1E3A2F] hover:text-[#F9F6F0] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B34D36] motion-reduce:transition-none"
+              >
+                <span class="font-bold text-[#B34D36] group-hover/link:text-[#FFC107]">
+                  0{indice + 1}
+                </span>
+                {momento.hora}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </header>
+
+    <div class="relative mt-12 space-y-16 sm:mt-16 sm:space-y-24 lg:mt-24 lg:space-y-32">
+      <div
+        aria-hidden="true"
+        class="absolute bottom-20 left-5 top-12 hidden w-px bg-gradient-to-b from-transparent via-[#1E3A2F]/25 to-transparent sm:block lg:left-1/2"
+      ></div>
+
+      {itinerarioDia.map((momento, indice) => (
+        <article
+          id={`parada-${indice + 1}`}
+          class:list={[
+            "group relative grid scroll-mt-28 gap-7 sm:ml-16 sm:gap-9 lg:ml-0 lg:grid-cols-2 lg:items-center lg:gap-20",
+            indice % 2 === 1 && "lg:[&>div:first-of-type]:order-2",
+          ]}
+        >
+          <span
+            aria-hidden="true"
+            class="absolute -left-16 top-6 z-10 hidden size-10 place-items-center rounded-full border border-[#B34D36]/35 bg-[#F9F6F0] text-xs font-bold tracking-wide text-[#1E3A2F] sm:grid lg:left-1/2 lg:top-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2"
+          >
+            0{indice + 1}
+          </span>
+
+          <div class="relative">
+            <div class="absolute -inset-2 rounded-[1.8rem] border border-[#B34D36]/25 transition-transform duration-500 group-hover:translate-x-1 group-hover:translate-y-1 motion-reduce:transform-none motion-reduce:transition-none"></div>
+
+            <div class="relative aspect-[4/3] overflow-hidden rounded-[1.4rem] bg-[#1E3A2F]/10 sm:aspect-[16/11] lg:aspect-[1.08/1]">
+              {momento.imagen ? (
+                <>
+                  <Image
+                    src={momento.imagen}
+                    alt={momento.alt ?? ""}
+                    class="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.045] motion-reduce:transform-none motion-reduce:transition-none"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div
+                    aria-hidden="true"
+                    class="absolute inset-0 bg-gradient-to-t from-[#12261E]/65 via-transparent to-[#12261E]/10"
+                  ></div>
+                  <span class="absolute bottom-5 left-5 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.17em] text-white sm:bottom-7 sm:left-7">
+                    <span class="h-px w-7 bg-[#FFC107]"></span>
+                    {momento.lugar}
+                  </span>
+                </>
+              ) : (
+                <div class="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_25%_20%,rgba(255,253,248,0.85),transparent_35%),linear-gradient(145deg,#FFC107,#B34D36)]">
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 96 96"
+                    class="size-28 fill-none stroke-[#1E3A2F]/75 sm:size-36"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M24 37h42v29a17 17 0 0 1-17 17h-8a17 17 0 0 1-17-17V37Z"></path>
+                    <path d="M66 43h7a12 12 0 0 1 0 24h-8M34 23c0 6 7 6 7 12M48 17c0 6 7 6 7 12"></path>
+                    <path d="M17 74h15M65 74h14"></path>
+                  </svg>
+
+                  <span class="absolute bottom-5 left-5 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.17em] text-[#1E3A2F]">
+                    <span class="h-px w-7 bg-[#1E3A2F]/50"></span>
+                    {momento.lugar}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div class="relative flex flex-col justify-center py-1 sm:py-5 lg:py-8">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-bold uppercase tracking-[0.2em] text-[#B34D36]">
+                {momento.hora}
+              </span>
+              <span aria-hidden="true" class="h-px w-6 bg-[#1E3A2F]/25"></span>
+            </div>
+
+            <h3 class="mt-5 max-w-[17ch] text-balance text-3xl font-semibold leading-[1.12] tracking-[-0.035em] sm:text-4xl lg:text-5xl">
+              {momento.titulo}
+            </h3>
+
+            <p class="mt-5 max-w-xl text-base leading-[1.9] text-[#40564A] sm:mt-6 sm:text-lg">
+              {momento.descripcion}
+            </p>
+
+            <div aria-hidden="true" class="mt-7 h-px w-12 bg-[#B34D36] transition-all duration-500 group-hover:w-20 motion-reduce:transition-none"></div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <footer class="relative mt-20 overflow-hidden rounded-[1.5rem] bg-[#1E3A2F] text-[#F9F6F0] sm:mt-28 sm:rounded-[2rem]">
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute -right-20 -top-28 size-80 rounded-full border border-[#FFC107]/15 sm:size-[28rem]"
+      ></div>
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute -right-8 -top-16 size-64 rounded-full border border-[#FFC107]/10 sm:size-[22rem]"
+      ></div>
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,193,7,0.09),transparent_55%)]"
+      ></div>
+
+      <div class="relative flex flex-col gap-8 px-6 py-10 sm:px-10 sm:py-14 lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:px-14 lg:py-16">
+        <div class="max-w-3xl">
+          <div class="flex items-center gap-3">
+          </div>
+
+          <h2 class="mt-5 max-w-[23ch] text-balance text-3xl font-semibold leading-tight tracking-[-0.035em] sm:text-4xl lg:text-5xl">
+            {t("Saladas te espera con historia, tradición y naturaleza.")}
+          </h2>
+
+          <p class="mt-5 max-w-2xl text-base leading-relaxed text-[#F9F6F0]/80 sm:text-lg">
+            {cierreItinerario} {t("Armá tu plan y vení a descubrirla.")}
+          </p>
+        </div>
+
+        <a
+          href={localizarRuta("/mapa/", idioma)}
+          class="group inline-flex min-h-14 shrink-0 items-center justify-center gap-4 self-start rounded-full bg-[#FFC107] px-7 text-sm font-bold text-[#1E3A2F] transition-colors duration-300 hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B34D36] sm:self-auto motion-reduce:transition-none"
+        >
+          {t("Descubrir el mapa")}
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            class="size-4 fill-none stroke-current transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none"
+            stroke-width="1.8"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.5 10h12m-5-5 5 5-5 5"></path>
+          </svg>
+        </a>
+      </div>
+    </footer>
+  </div>
+</section>

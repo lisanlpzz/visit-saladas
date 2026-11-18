@@ -1,0 +1,37 @@
+---
+import { Image } from "astro:assets";
+import carpincho from "../../images/carpincho.webp";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+---
+
+<section
+  class="relative isolate flex min-h-[min(78svh,48rem)] items-center overflow-hidden bg-[#1E3A2F] px-5 py-24 text-[#F9F6F0] sm:px-8"
+  aria-labelledby="nosotros-title"
+>
+  <Image
+    src={carpincho}
+    alt={t("Un carpincho y su cría entre camalotes en flor")}
+    class="absolute inset-0 -z-20 h-full w-full object-cover object-[58%_center]"
+    loading="eager"
+    decoding="async"
+  />
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,38,30,0.78)_0%,rgba(18,38,30,0.57)_48%,rgba(18,38,30,0.2)_100%)]"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#12261E]/55 via-transparent to-[#12261E]/15"></div>
+
+  <div class="mx-auto grid w-full max-w-7xl gap-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+    <div class="max-w-3xl">
+      <h1
+        id="nosotros-title"
+        class="max-w-[11ch] text-balance text-[clamp(3rem,8vw,6.5rem)] font-extrabold leading-[0.96] tracking-[-0.055em]"
+      >
+        {t("Sobre Visit Saladas")}
+      </h1>
+      <p class="mt-5 max-w-2xl text-balance text-base leading-relaxed text-[#F9F6F0]/85 sm:text-xl sm:leading-relaxed">
+        {t("Un proyecto independiente que muestra con orgullo la esencia de nuestra ciudad.")}
+      </p>
+    </div>
+  </div>
+</section>

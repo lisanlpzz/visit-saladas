@@ -1,0 +1,26 @@
+---
+import Masonry from "../react/masonry";
+import { obtenerGaleria } from "../../data/galeria";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const items = obtenerGaleria(idioma);
+---
+
+<section class="bg-[#F9F6F0] px-4 py-12 text-[#2a1b13] sm:px-8 sm:py-16" aria-labelledby="galeria-fotos-title">
+  <div class="mx-auto max-w-[90rem]">
+    <div class="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 id="galeria-fotos-title" class="text-3xl font-bold tracking-tight sm:text-4xl">
+          {t("La ciudad en imágenes")}
+        </h2>
+        <span aria-hidden="true" class="mt-4 block h-[3px] w-12 rounded-full bg-[#FFC107]"></span>
+      </div>
+      <p class="max-w-md text-sm leading-relaxed text-[#2a1b13]/65">
+        {t("Historia, naturaleza y rincones cotidianos. Seleccioná una foto para verla en tamaño completo.")}
+      </p>
+    </div>
+    <Masonry client:visible items={items} idioma={idioma} highlightedImageId="garza-blanca" featuredLabel={t("Destacada")} />
+  </div>
+</section>

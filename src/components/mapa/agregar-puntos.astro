@@ -1,0 +1,32 @@
+---
+import { obtenerIdioma, traducir } from "../../i18n";
+import { enlaceWhatsApp } from "../../data/contacto";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const contactUrl = enlaceWhatsApp(t("Hola, quisiera agregar un punto al mapa turístico de Saladas."));
+---
+
+<section class="bg-[#F9F6F0] px-5 pb-12 pt-2 text-[#2a1b13] sm:px-8 sm:pb-16">
+  <div class="mx-auto flex max-w-7xl flex-col gap-5 rounded-3xl border border-[#B34D36]/20 bg-white/70 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+    <div>
+      <h2 class="mt-2 text-xl font-bold tracking-tight sm:text-2xl">
+        {t("¿Querés sumar tu punto al mapa?")}
+      </h2>
+      <p class="mt-2 max-w-xl text-sm leading-relaxed text-[#2a1b13]/65 sm:text-base">
+        {t("Escribinos y contanos qué lugar te gustaría agregar. ¡Nos encantaría incluirlo!")}
+      </p>
+    </div>
+    <a
+      href={contactUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 self-start rounded-full bg-[#FFC107] px-6 text-sm font-bold text-[#2a1b13] transition-colors hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#B34D36] sm:self-center"
+    >
+      {t("Contactanos")}
+      <svg aria-hidden="true" viewBox="0 0 20 20" class="size-4 fill-none stroke-current" stroke-width="1.7">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h13m-5-5 5 5-5 5" />
+      </svg>
+    </a>
+  </div>
+</section>

@@ -1,0 +1,997 @@
+---
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+
+const t = (texto: string) => traducir(texto, idioma);
+
+const textosClima = {
+  cargando: t("Cargando clima..."),
+  manana: t("Mañana"),
+  despejado: t("Despejado"),
+  algoNublado: t("Algo nublado"),
+  nublado: t("Nublado"),
+  niebla: t("Niebla"),
+  llovizna: t("Llovizna"),
+  lluvia: t("Lluvia"),
+  tormenta: t("Tormenta"),
+  tipSol: t("¡Salió el sol en Saladas! Unos mates en la Costanera y a disfrutar."),
+  tipNoche: t("La noche invita a una vuelta por la plaza. Después, un mate bajo las estrellas."),
+  tipParcial: t("Sol y nubes, como para pasear sin apuro. ¿Ya está listo el tereré?"),
+  tipNublado: t("Día de paseo tranquilo: una vuelta por el centro y algo rico para acompañar el mate."),
+  tipNiebla: t("La laguna amaneció entre brumas. Si salís a la ruta, manejá con cuidado."),
+  tipLlovizna: t("Cae una llovizna. Plan ideal para unos mates y una torta frita."),
+  tipLluvia: t("Día para quedarse a cubierto: mate, torta parrilla y ver llover."),
+  tipTormenta: t("Se viene movido el cielo. Mejor quedarse bajo techo hasta que pase."),
+  mensajeNocheUno: t("Una caminata por la plaza también viene bien para cerrar el día."),
+  mensajeNocheDos: t("En Saladas, la noche se disfruta sin apuro."),
+  mensajeTormentaExtra: t("¡A resguardo! El mate puede esperar a que afloje la tormenta."),
+  mensajeLluviaFritas: t("Con esta lluvia, unas tortas fritas y mate son un planazo."),
+  mensajeTortaParrilla: t("Hoy pinta torta parrilla, de esas que alegran la tarde."),
+  mensajeNieblaExtra: t("La laguna está misteriosa hoy. Ojo en la ruta y paseo con calma."),
+  mensajeTormentaUno: t("La tormenta se va a tomar su tiempo; mejor esperar bajo techo."),
+  mensajeTormentaDos: t("Con truenos cerca, el paseo puede quedar para más tarde."),
+  mensajeTormentaTres: t("Día de asegurar las cosas de afuera y seguirla desde adentro."),
+  mensajeTormentaCuatro: t("Si necesitás salir, tomalo con calma y buscá refugio si empeora."),
+  mensajeTormentaNoche: t("Noche de tormenta: mejor dejar la plaza para cuando despeje."),
+  mensajeLloviznaUno: t("Tranqui para andar con paraguas y sin apuro."),
+  mensajeLloviznaDos: t("El cielo está húmedo; un abrigo liviano puede venir bien."),
+  mensajeLloviznaTres: t("Por la Costanera, hoy mejor paseo corto y paraguas cerca."),
+  mensajeLloviznaCuatro: t("Llovizna tranquila, de esas que cambian el paisaje sin apurarlo."),
+  mensajeLloviznaNoche: t("Si salís, hacelo con cuidado y paraguas cerca."),
+  mensajeLluviaUno: t("Con lluvia, los planes al aire libre pueden esperar."),
+  mensajeLluviaDos: t("El agua moja las calles; paraguas a mano si tenés que salir."),
+  mensajeLluviaTres: t("Desde adentro, la lluvia sobre Saladas también tiene su encanto."),
+  mensajeLluviaCuatro: t("Día de bajar el ritmo y dejar que pase el chaparrón."),
+  mensajeLluviaNoche: t("Lluvia de noche: mejor dejar el paseo para mañana."),
+  mensajeNieblaUno: t("Con esta visibilidad, mejor tomarse el camino con calma."),
+  mensajeNieblaDos: t("Si vas hacia la ruta, luces encendidas y distancia."),
+  mensajeNieblaTres: t("La bruma cubrió el paisaje; hoy conviene moverse sin apuro."),
+  mensajeNieblaCuatro: t("Entre la laguna y la ciudad, el horizonte casi no se ve."),
+  mensajeNieblaNoche: t("Con bruma de noche, manejá despacio y con las luces encendidas."),
+  mensajeNocheTres: t("Las luces de Saladas empiezan a marcar el ritmo de la noche."),
+  mensajeNocheCuatro: t("A esta hora, un paseo corto por el centro viene bien."),
+  mensajeNocheCinco: t("La plaza queda tranquila cuando baja el sol."),
+  mensajeNocheSeis: t("Noche serena en Saladas: todo invita a ir más despacio."),
+  mensajeCalorTres: t("Con el sol fuerte, mejor dejar las caminatas para más tarde."),
+  mensajeCalorCuatro: t("Agua fresca, sombra y pausas: hoy conviene cuidarse del calor."),
+  mensajeCalorCinco: t("La Costanera va a estar mejor cuando afloje el calor."),
+  mensajeCalorSeis: t("Día pesado: un rato a la sombra puede cambiar el plan."),
+  mensajeFrioTres: t("A la mañana se siente el fresco; una campera viene bien."),
+  mensajeFrioCuatro: t("Con este aire fresco, una vuelta corta alcanza."),
+  mensajeFrioCinco: t("Un mate caliente y un rato al sol pueden levantar el día."),
+  mensajeFrioSeis: t("Si salís temprano, llevá algo de abrigo."),
+  mensajeSolCinco: t("El cielo está limpio; buen momento para recorrer Saladas."),
+  mensajeSolSeis: t("Con este sol, la Costanera invita a una vuelta tranquila."),
+  mensajeSolSiete: t("Las garzas se disfrutan más cuando el cielo despeja."),
+  mensajeSolOcho: t("Día luminoso para salir un rato y volver sin apuro."),
+  mensajeParcialCuatro: t("El sol aparece entre nubes; buen clima para una vuelta corta."),
+  mensajeParcialCinco: t("El cielo cambia, pero todavía da para pasear sin apuro."),
+  mensajeParcialSeis: t("Las nubes van y vienen; el tereré o el mate igual acompañan."),
+  mensajeParcialSiete: t("Si salís, llevá lentes: el sol se asoma por momentos."),
+  mensajeCalorUno: t("¡Qué calorcito! Tereré bien frío y a buscar la sombra."),
+  mensajeCalorDos: t("Un tereré, algo fresco y a disfrutar Saladas sin apuro."),
+  mensajeFrioUno: t("Fresquito en Saladas: mate calentito y una porción de torta parrilla."),
+  mensajeFrioDos: t("Día ideal para unos mates y un chipá de la Shell."),
+  mensajeSolUno: t("Solcito, anteojos puestos y mate en mano. ¡Así sí!"),
+  mensajeSolDos: t("Si pasás por la Shell, ese chipá tiene pinta de compañero de paseo."),
+  mensajeSolTres: t("Con este cielo dan ganas de caminar por la Costanera y mirar las garzas."),
+  mensajeSolCuatro: t("Capaz te cruzás algún carpincho descansando cerca de la laguna."),
+  mensajeParcialUno: t("Un tereré y una vuelta por el centro: plan sencillo, plan perfecto."),
+  mensajeParcialDos: t("¿Mate o tereré? En Saladas siempre hay una buena excusa."),
+  mensajeParcialTres: t("Ojo al paisaje: las garzas también salen a pasear."),
+};
+---
+
+<button
+  type="button"
+  data-clima-overlay
+  aria-label={t("Cerrar")}
+  aria-hidden="true"
+  data-visible="false"
+  tabindex="-1"
+  class="fixed inset-0 z-40 bg-[#17130f]/30 opacity-0 backdrop-blur-[2px] transition-[opacity,visibility] duration-300 print:hidden"
+></button>
+
+<aside
+  aria-label={t("Clima en Saladas")}
+  data-widget-clima-raiz
+  data-oculto="true"
+  data-foco="false"
+  data-clima-cargando="true"
+  aria-busy="true"
+  data-locale={idioma}
+  data-weather-labels={JSON.stringify(textosClima)}
+  class="fixed bottom-[5.25rem] z-30 flex flex-col items-end transition-[opacity,translate,visibility] duration-300 print:hidden sm:bottom-[5.5rem]"
+  style="right: max(1rem, env(safe-area-inset-right));"
+>
+  {/* Panel desplegable completo (se abre hacia arriba sobre el botón) */}
+  <div
+    id="panel-clima-saladas"
+    data-panel-clima
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="panel-clima-titulo"
+    tabindex="-1"
+    class="relative mb-3 w-[min(calc(100vw-2rem),23rem)] overflow-hidden rounded-3xl border border-[#2a1b13]/12 bg-[#F9F6F0]/98 p-4 text-[#2a1b13] shadow-[0_24px_60px_-14px_rgba(42,27,19,0.34)] backdrop-blur-md sm:p-5"
+  >
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-[#FFC107]/20 blur-2xl"
+    ></div>
+
+    <div class="relative flex items-start justify-between gap-3">
+      <div class="flex items-center gap-3.5">
+        <div
+          data-clima-escena-grande
+          data-clima-skeleton
+          class="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-[#2a1b13]/8"
+          aria-hidden="true"
+        ></div>
+        <div>
+          <p id="panel-clima-titulo" class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#B34D36]">
+            Saladas, Corrientes
+          </p>
+          <div class="mt-0.5 flex items-baseline gap-2">
+            <span data-clima-panel-temp data-clima-skeleton class="text-3xl font-extrabold leading-none tabular-nums text-[#1E3A2F]">
+              --°
+            </span>
+            <span data-clima-panel-estado data-clima-skeleton class="text-sm font-bold text-[#40564A]">
+              {t("Cargando clima...")}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        data-minimizar-clima
+        aria-label={t("Minimizar")}
+        title={t("Minimizar")}
+        class="grid size-8 shrink-0 place-items-center rounded-full bg-white/85 text-[#2a1b13]/60 ring-1 ring-[#2a1b13]/10 transition-colors hover:bg-white hover:text-[#1E3A2F] focus-visible:outline-2 focus-visible:outline-[#B34D36]"
+      >
+        <svg aria-hidden="true" viewBox="0 0 20 20" class="size-4 fill-none stroke-current" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m6 8 4 4 4-4" />
+        </svg>
+      </button>
+    </div>
+
+    <p
+      data-clima-tip
+      data-clima-skeleton
+      class="relative mt-3.5 rounded-2xl border border-[#FFC107]/35 bg-[#FFC107]/15 px-3.5 py-2.5 text-xs font-semibold leading-relaxed text-[#2a1b13]"
+    ></p>
+
+    <dl class="relative mt-3.5 grid grid-cols-4 gap-1.5 text-center">
+      <div class="rounded-2xl bg-white px-1.5 py-2 shadow-2xs ring-1 ring-[#2a1b13]/6">
+        <dt class="text-[10px] font-medium text-[#2a1b13]/60">{t("Sensación")}</dt>
+        <dd data-clima-sensacion data-clima-skeleton class="mt-0.5 text-xs font-extrabold tabular-nums text-[#1E3A2F]">--°</dd>
+      </div>
+      <div class="rounded-2xl bg-white px-1.5 py-2 shadow-2xs ring-1 ring-[#2a1b13]/6">
+        <dt class="text-[10px] font-medium text-[#2a1b13]/60">{t("Humedad")}</dt>
+        <dd data-clima-humedad data-clima-skeleton class="mt-0.5 text-xs font-extrabold tabular-nums text-[#0284C7]">--%</dd>
+      </div>
+      <div class="rounded-2xl bg-white px-1.5 py-2 shadow-2xs ring-1 ring-[#2a1b13]/6">
+        <dt class="text-[10px] font-medium text-[#2a1b13]/60">{t("Viento")}</dt>
+        <dd data-clima-viento data-clima-skeleton class="mt-0.5 text-xs font-extrabold tabular-nums text-[#1E3A2F]">--</dd>
+      </div>
+      <div class="rounded-2xl bg-white px-1.5 py-2 shadow-2xs ring-1 ring-[#2a1b13]/6">
+        <dt class="text-[10px] font-medium text-[#2a1b13]/60">{t("Atardecer")}</dt>
+        <dd data-clima-atardecer data-clima-skeleton class="mt-0.5 text-xs font-extrabold tabular-nums text-[#B34D36]">--:--</dd>
+      </div>
+    </dl>
+
+    <div class="relative mt-4 border-t border-[#2a1b13]/10 pt-3">
+      <p class="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#2a1b13]/55">
+        {t("Pronóstico extendido")}
+      </p>
+      <div data-clima-dias data-clima-skeleton class="space-y-1.5 text-xs"></div>
+    </div>
+  </div>
+
+  {/* Fila inferior: Burbuja de diálogo ocasional + Botón circular del personaje */}
+  <div class="relative flex items-center justify-end">
+    <div
+      data-clima-burbuja
+      data-visible="false"
+      class="pointer-events-none absolute right-full mr-3 w-56 rounded-2xl rounded-br-sm border border-[#2a1b13]/10 bg-[#F9F6F0]/95 px-3.5 py-2 text-xs font-semibold leading-snug text-[#1E3A2F] shadow-[0_10px_28px_-6px_rgba(42,27,19,0.28)] backdrop-blur-md transition-[opacity,transform] duration-300 sm:w-64"
+    >
+      <span data-clima-burbuja-texto></span>
+    </div>
+
+    <button
+      type="button"
+      data-toggle-clima
+      aria-expanded="false"
+      aria-controls="panel-clima-saladas"
+      aria-label={t("Clima en Saladas")}
+      class="group relative flex size-13 items-center justify-center rounded-full border border-[#2a1b13]/12 bg-[#F9F6F0] shadow-[0_8px_24px_-4px_rgba(42,27,19,0.34)] transition-transform duration-300 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#1E3A2F] active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100 sm:size-14"
+    >
+      <span data-clima-escena-mini data-clima-skeleton class="grid size-11 place-items-center overflow-hidden rounded-full sm:size-12" aria-hidden="true">
+        <svg viewBox="0 0 48 48" class="size-full p-0.5">
+          <g class="clima-rayos" style="transform-origin:24px 24px">
+            <path d="M24 4v4M24 40v4M4 24h4M40 24h4M9.8 9.8l2.8 2.8M35.4 35.4l2.8 2.8M38.2 9.8l-2.8 2.8M12.6 35.4l-2.8 2.8" stroke="#F59E0B" stroke-width="2.6" stroke-linecap="round" />
+          </g>
+          <circle cx="24" cy="24" r="11" fill="#FBBF24" class="clima-sol-pulso" />
+        </svg>
+      </span>
+      <span
+        data-clima-temp
+        data-clima-skeleton
+        class="absolute -left-1.5 -top-1.5 rounded-full bg-[#1E3A2F] px-1.5 py-0.5 text-[10px] font-extrabold leading-none tabular-nums text-[#FFC107] shadow-sm ring-2 ring-[#F9F6F0]"
+      >
+        --°
+      </span>
+    </button>
+  </div>
+</aside>
+
+<script>
+  const raizClima = document.querySelector<HTMLElement>("[data-widget-clima-raiz]");
+
+  if (raizClima) {
+    // 1. Mostrar al pasar la portada (sincronizado con WhatsApp)*
+    const portada = document.getElementById("portada");
+    const recorrido = portada?.querySelector<HTMLElement>("[data-scroll-expand-track]");
+    const escenario = portada?.querySelector<HTMLElement>("[data-scroll-expand-stage]");
+    const UMBRAL_PROGRESO = 0.6;
+
+    const debeMostrarse = () => {
+      if (recorrido && escenario) {
+        const distancia = Number(recorrido.dataset.scrollDistance) || 1;
+        const progreso = -recorrido.getBoundingClientRect().top / (escenario.clientHeight * distancia);
+        return progreso >= UMBRAL_PROGRESO;
+      }
+      return window.scrollY > window.innerHeight * 0.5;
+    };
+
+    let pendiente = false;
+
+    const actualizarVisibilidad = () => {
+      pendiente = false;
+      raizClima.dataset.oculto = String(!debeMostrarse());
+    };
+
+    const programar = () => {
+      if (pendiente) return;
+      pendiente = true;
+      requestAnimationFrame(actualizarVisibilidad);
+    };
+
+    window.addEventListener("scroll", programar, { passive: true });
+    window.addEventListener("resize", programar);
+    window.addEventListener("pageshow", actualizarVisibilidad);
+    actualizarVisibilidad();
+
+    // 2. Expandir / Minimizar*
+    const toggle = raizClima.querySelector<HTMLButtonElement>("[data-toggle-clima]");
+    const minimizarBtn = raizClima.querySelector<HTMLButtonElement>("[data-minimizar-clima]");
+    const panel = raizClima.querySelector<HTMLElement>("[data-panel-clima]");
+    const burbuja = raizClima.querySelector<HTMLElement>("[data-clima-burbuja]");
+    const overlay = document.querySelector<HTMLButtonElement>("[data-clima-overlay]");
+
+    const ocultarBurbuja = () => {
+      if (burbuja) burbuja.dataset.visible = "false";
+    };
+
+    const setAbierto = (abierto: boolean, devolverFoco = true) => {
+      if (!toggle || !panel) return;
+      panel.hidden = !abierto;
+      toggle.setAttribute("aria-expanded", String(abierto));
+      raizClima.dataset.foco = String(abierto);
+      if (overlay) {
+        overlay.dataset.visible = String(abierto);
+        overlay.setAttribute("aria-hidden", String(!abierto));
+      }
+      if (abierto) {
+        ocultarBurbuja();
+        requestAnimationFrame(() => panel.focus());
+      } else if (devolverFoco) {
+        toggle.focus();
+      }
+    };
+
+    toggle?.addEventListener("click", () => setAbierto(Boolean(panel?.hidden)));
+    minimizarBtn?.addEventListener("click", () => setAbierto(false));
+    overlay?.addEventListener("click", () => setAbierto(false));
+
+    document.addEventListener("click", (e) => {
+      if (e.target instanceof Node && !raizClima.contains(e.target) && e.target !== overlay) {
+        setAbierto(false, false);
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (panel?.hidden) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setAbierto(false);
+        return;
+      }
+      if (e.key === "Tab" && minimizarBtn) {
+        e.preventDefault();
+        minimizarBtn.focus();
+      }
+    });
+
+    // 3. Escenas climáticas
+    const ESCENAS = {
+      solMate: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Sol y mate">
+          <g class="clima-rayos" style="transform-origin:27px 26px">
+            <path d="M27 3v7M27 42v7M4 26h7M43 26h7M10.7 9.7l5 5M38.3 37.3l5 5M43.3 9.7l-5 5M15.7 37.3l-5 5" stroke="#E9A11B" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <circle cx="27" cy="26" r="17" fill="#FFC83D" class="clima-sol-pulso"/>
+          <g class="clima-mate" style="transform-origin:48px 48px">
+            <path d="M42 40h12l-1.5 13q-4.5 3-9 0Z" fill="#B66A3C" stroke="#784329" stroke-width="1.2"/>
+            <path d="M42 40q6 3 12 0" fill="none" stroke="#244638" stroke-width="2"/>
+            <path d="m47 39-5-12" stroke="#9AA6A0" stroke-width="2" stroke-linecap="round"/>
+            <path d="M54 43h2a3 3 0 0 1 0 6h-2" fill="none" stroke="#784329" stroke-width="1.8"/>
+          </g>
+          <path class="clima-vapor" d="M49 37q-2-3 0-6q2-3 0-6" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>`,
+
+      noche: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Luna creciente bajo un cielo despejado">
+          <g class="clima-luna">
+            <path d="M33 4A22 22 0 1 0 55 36 18 18 0 0 1 33 4Z" fill="#F7C85B"/>
+          </g>
+          <path d="M50 8v5m-2.5-2.5h5M10 22v5m-2.5-2.5h5M58 22v4m-2-2h4" stroke="#E6B74F" stroke-width="1.8" stroke-linecap="round" class="clima-estrella"/>
+        </svg>`,
+
+      parcial: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Sol entre nubes y una garza volando">
+          <circle cx="23" cy="23" r="13" fill="#FFC83D" class="clima-sol-pulso"/>
+          <g class="clima-rayos" style="transform-origin:23px 23px"><path d="M23 4v5M23 37v5M4 23h5M37 23h5M9.5 9.5l4 4M33 33l4 4M37 9.5l-4 4" stroke="#E9A11B" stroke-width="2.5" stroke-linecap="round"/></g>
+          <path d="M15 46h34a9 9 0 0 0 0-18 13 13 0 0 0-24-2 10 10 0 0 0-10 20Z" fill="#E7EEF0" stroke="#8EA6AA" stroke-width="1.5" class="clima-nube"/>
+          <g class="clima-garza-vuelo" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round">
+            <path d="M42 11q4-5 8 0q4-5 8 0"/>
+            <path d="M58 11l4 1" stroke="#E9A11B"/>
+          </g>
+        </svg>`,
+
+      nublado: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Cielo nublado con una garza en la costa">
+          <path d="M10 36h36a9 9 0 0 0 0-18 13 13 0 0 0-24-2 10 10 0 0 0-12 20Z" fill="#C9D9DC" stroke="#829DA2" stroke-width="1.7" class="clima-nube"/>
+          <path d="M6 58q8-3 16 0t16 0t16 0" fill="none" stroke="#92B7AD" stroke-width="2" stroke-linecap="round"/>
+          <g class="clima-garza">
+            <ellipse cx="46" cy="47" rx="8" ry="5.5" fill="#fff" stroke="#C9D9DC" stroke-width="1"/>
+            <path d="M51 44q6-5 2-12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="53" cy="31" r="2.4" fill="#fff"/>
+            <path d="m55 31 7 1.5" stroke="#E9A11B" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="53.5" cy="30.5" r=".7" fill="#2a1b13"/>
+            <path d="M45 52v7" stroke="#E9A11B" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+        </svg>`,
+
+      niebla: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Bruma baja sobre el paisaje">
+          <path d="M14 22h34a9 9 0 0 0 0-18 13 13 0 0 0-24-2 10 10 0 0 0-10 20Z" fill="#D5E0E1" stroke="#91A7A9" stroke-width="1.5" class="clima-nube"/>
+          <path d="M5 34h54M10 44h46M4 53h40" stroke="#E7EEF0" stroke-width="5" stroke-linecap="round" opacity=".85" class="clima-bruma"/>
+          <path d="M8 59h48" stroke="#C5D3D5" stroke-width="4" stroke-linecap="round" opacity=".8" class="clima-bruma"/>
+        </svg>`,
+
+      llovizna: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Llovizna">
+          <path d="M10 26h38a9 9 0 0 0 0-18 13 13 0 0 0-25-2 10 10 0 0 0-13 20Z" fill="#B8CDD1" stroke="#78969C" stroke-width="1.5" class="clima-nube"/>
+          <g class="clima-gotas"><path d="m16 32-1.5 4m12-4-1.5 4m12-4-1.5 4m12-4-1.5 4" stroke="#389BC0" stroke-width="2.2" stroke-linecap="round"/></g>
+        </svg>`,
+
+      paraguasLluvia: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Paraguas bajo la lluvia">
+          <path d="M8 18h40a8 8 0 0 0 0-16 12 12 0 0 0-23-2 9 9 0 0 0-17 18Z" fill="#B8CDD1" stroke="#78969C" stroke-width="1.4" class="clima-nube" transform="translate(4 0) scale(.92)"/>
+          <g class="clima-paraguas" style="transform-origin:34px 30px">
+            <path d="M12 32q20-20 40 0Z" fill="#C56C45" stroke="#8F4930" stroke-width="1.2"/>
+            <path d="M32 32v8" stroke="#76513C" stroke-width="2" stroke-linecap="round"/>
+            <path d="M25 32q-2-4 0-6M39 32q2-4 0-6" fill="none" stroke="#F5D49A" stroke-width="1"/>
+          </g>
+          <g class="clima-gotas"><path d="m8 40-2 5m50-5-2 5m-18-12-2 5" stroke="#389BC0" stroke-width="2.4" stroke-linecap="round"/></g>
+        </svg>`,
+
+      tormenta: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Tormenta con lluvia y relámpago">
+          <path d="M8 32h42a10 10 0 0 0 0-20 14 14 0 0 0-27-2 11 11 0 0 0-15 22Z" fill="#71838D" stroke="#4D626C" stroke-width="1.5"/>
+          <path d="M31 31 22 44h8l-3 12 14-19h-9l5-7Z" fill="#FFD45C" class="clima-relampago"/>
+          <g class="clima-gotas"><path d="m10 40-2 5m38-3-2 5" stroke="#55B9DC" stroke-width="2.5" stroke-linecap="round"/></g>
+        </svg>`,
+
+      calorTerere: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Sol intenso junto a un tereré">
+          <g class="clima-rayos" style="transform-origin:26px 26px">
+            <path d="M26 2v7M26 43v7M3 26h7M42 26h7M9.7 9.7l5 5M37.3 37.3l5 5M42.3 9.7l-5 5M14.7 37.3l-5 5" stroke="#F28B1B" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <circle cx="26" cy="26" r="17" fill="#FFB02E" class="clima-sol-pulso"/>
+          <g class="clima-mate" style="transform-origin:48px 50px">
+            <path d="M40 38h13l-1.8 16q-4.7 3-9.4 0Z" fill="#C58B52" stroke="#784329" stroke-width="1.2"/>
+            <path d="M40 38q6.5 3 13 0" fill="#B7E3F0" stroke="#784329" stroke-width="1.2"/>
+            <rect x="42" y="38" width="3.4" height="3.4" rx=".8" fill="#fff" opacity=".85"/><rect x="47" y="39" width="3.4" height="3.4" rx=".8" fill="#fff" opacity=".85"/>
+            <path d="m50 38 7-14" stroke="#9AA6A0" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </svg>`,
+
+      frioMate: `
+        <svg viewBox="0 0 64 64" class="size-full p-1" role="img" aria-label="Termómetro bajo con bufanda y mate caliente">
+          <path d="M20 12a6 6 0 0 1 12 0v27a11 11 0 1 1-12 0Z" fill="#E7EEF0" stroke="#78969C" stroke-width="1.8"/>
+          <path d="M26 20v27" stroke="#5CAFC5" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="26" cy="47" r="5" fill="#5CAFC5"/>
+          <path d="M20 26h5m-5 8h5" stroke="#78969C" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M10 37q17 8 34 0v6q-17 8-34 0Z" fill="#B34D36" stroke="#7E2F1F" stroke-width="1.3"/>
+          <path d="M16 39v8M24 41v8M32 41v8M40 39v8" stroke="#F5D49A" stroke-width="1.4"/>
+          <g class="clima-mate" style="transform-origin:50px 52px">
+            <path d="M46 46h12l-1.5 12q-4.5 3-9 0Z" fill="#B66A3C" stroke="#784329" stroke-width="1.2"/>
+            <path d="M46 46q6 3 12 0" fill="none" stroke="#244638" stroke-width="2"/>
+            <path d="m53 45 4-12" stroke="#9AA6A0" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <path class="clima-vapor" d="M51 42q-3-4 0-8q3-4 0-8" fill="none" stroke="#D8E8EC" stroke-width="2" stroke-linecap="round"/>
+        </svg>`,
+    };
+
+    const labels = JSON.parse(raizClima.dataset.weatherLabels ?? "{}") as Record<string, string>;
+
+    const locale =
+      raizClima.dataset.locale === "en"
+        ? "en-US"
+        : raizClima.dataset.locale === "pt-br"
+          ? "pt-BR"
+          : "es-AR";
+
+    const infoClima = (code: number, isDay = 1) => {
+      if (code === 0) {
+        return isDay
+          ? { texto: labels.despejado ?? "Despejado", emoji: "☀️", escena: ESCENAS.solMate, tip: labels.tipSol }
+          : { texto: labels.despejado ?? "Despejado", emoji: "🌙", escena: ESCENAS.noche, tip: labels.tipNoche };
+      }
+
+      if (code === 1 || code === 2) {
+        return {
+          texto: labels.algoNublado ?? "Algo nublado",
+          emoji: isDay ? "⛅" : "☁️",
+          escena: isDay ? ESCENAS.parcial : ESCENAS.noche,
+          tip: isDay ? labels.tipParcial : labels.tipNoche,
+        };
+      }
+
+      if (code === 3 || code === 45 || code === 48) {
+        const niebla = code === 45 || code === 48;
+        return {
+          texto: niebla ? (labels.niebla ?? "Niebla") : (labels.nublado ?? "Nublado"),
+          emoji: niebla ? "🌫️" : "☁️",
+          escena: niebla ? ESCENAS.niebla : ESCENAS.nublado,
+          tip: niebla ? labels.tipNiebla : labels.tipNublado,
+        };
+      }
+
+      if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+        const llovizna = code <= 57;
+        return {
+          texto: llovizna ? (labels.llovizna ?? "Llovizna") : (labels.lluvia ?? "Lluvia"),
+          emoji: "☔",
+          escena: llovizna ? ESCENAS.llovizna : ESCENAS.paraguasLluvia,
+          tip: llovizna ? labels.tipLlovizna : labels.tipLluvia,
+        };
+      }
+
+      if (code >= 95) {
+        return {
+          texto: labels.tormenta ?? "Tormenta",
+          emoji: "⛈️",
+          escena: ESCENAS.tormenta,
+          tip: labels.tipTormenta,
+        };
+      }
+
+      return {
+        texto: labels.algoNublado ?? "Algo nublado",
+        emoji: "⛅",
+        escena: ESCENAS.parcial,
+        tip: labels.tipParcial,
+      };
+    };
+
+    const url =
+      "https://api.open-meteo.com/v1/forecast?latitude=-28.2535&longitude=-58.622&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunset&timezone=America%2FArgentina%2FCordoba&forecast_days=6";
+
+    fetch(url)
+      .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+      .then((data) => {
+        const escenaMini = raizClima.querySelector("[data-clima-escena-mini]");
+        const escenaGrande = raizClima.querySelector("[data-clima-escena-grande]");
+        const pillTemp = raizClima.querySelector("[data-clima-temp]");
+        const panelTemp = raizClima.querySelector("[data-clima-panel-temp]");
+        const panelEstado = raizClima.querySelector("[data-clima-panel-estado]");
+        const tipEl = raizClima.querySelector("[data-clima-tip]");
+        const burbujaTexto = raizClima.querySelector("[data-clima-burbuja-texto]");
+        const sensEl = raizClima.querySelector("[data-clima-sensacion]");
+        const humEl = raizClima.querySelector("[data-clima-humedad]");
+        const vientoEl = raizClima.querySelector("[data-clima-viento]");
+        const atardecerEl = raizClima.querySelector("[data-clima-atardecer]");
+        const diasCont = raizClima.querySelector("[data-clima-dias]");
+
+        const info = infoClima(Number(data.current?.weather_code ?? 0), Number(data.current?.is_day ?? 1));
+
+        // Con cielo despejado o poco nublado de día, el calor y el frío cambian al personaje
+        const tempEscena = Number(data.current?.temperature_2m ?? 22);
+        if (Number(data.current?.weather_code ?? 0) <= 2 && Number(data.current?.is_day ?? 1) === 1) {
+          if (tempEscena >= 30) info.escena = ESCENAS.calorTerere;
+          else if (tempEscena <= 15) info.escena = ESCENAS.frioMate;
+        }
+
+        const tempActual = Math.round(data.current?.temperature_2m);
+
+        if (Number.isFinite(tempActual)) {
+          if (pillTemp) pillTemp.textContent = `${tempActual}°`;
+          if (panelTemp) panelTemp.textContent = `${tempActual}°C`;
+        }
+
+        if (panelEstado) panelEstado.textContent = info.texto;
+        if (escenaMini) escenaMini.innerHTML = info.escena;
+        if (escenaGrande) escenaGrande.innerHTML = info.escena;
+
+        // Pequeños guiños locales: el clima informa, pero también cuenta algo de Saladas.
+        const codigoActual = Number(data.current?.weather_code ?? 0);
+        const temperaturaActual = Number(data.current?.temperature_2m ?? 22);
+        const esDeNoche = Number(data.current?.is_day ?? 1) === 0;
+        const mensajesLocales = codigoActual >= 95
+          ? [
+              labels.tipTormenta,
+              labels.mensajeTormentaExtra,
+              labels.mensajeTormentaUno,
+              labels.mensajeTormentaDos,
+              labels.mensajeTormentaTres,
+              labels.mensajeTormentaCuatro,
+              ...(esDeNoche ? [labels.mensajeTormentaNoche] : []),
+            ]
+          : codigoActual >= 51 && codigoActual <= 57
+            ? [
+                labels.tipLlovizna,
+                labels.mensajeLloviznaUno,
+                labels.mensajeLloviznaDos,
+                labels.mensajeLloviznaTres,
+                labels.mensajeLloviznaCuatro,
+                ...(esDeNoche ? [labels.mensajeLloviznaNoche] : []),
+              ]
+            : codigoActual >= 58 && codigoActual <= 82
+              ? [
+                  labels.tipLluvia,
+                  labels.mensajeLluviaFritas,
+                  labels.mensajeTortaParrilla,
+                  labels.mensajeLluviaUno,
+                  labels.mensajeLluviaDos,
+                  labels.mensajeLluviaTres,
+                  labels.mensajeLluviaCuatro,
+                  ...(esDeNoche ? [labels.mensajeLluviaNoche] : []),
+                ]
+              : codigoActual === 45 || codigoActual === 48
+                ? [
+                    labels.tipNiebla,
+                    labels.mensajeNieblaExtra,
+                    labels.mensajeNieblaUno,
+                    labels.mensajeNieblaDos,
+                    labels.mensajeNieblaTres,
+                    labels.mensajeNieblaCuatro,
+                    ...(esDeNoche ? [labels.mensajeNieblaNoche] : []),
+                  ]
+                : esDeNoche
+                  ? [
+                      labels.tipNoche,
+                      labels.mensajeNocheUno,
+                      labels.mensajeNocheDos,
+                      labels.mensajeNocheTres,
+                      labels.mensajeNocheCuatro,
+                      labels.mensajeNocheCinco,
+                      labels.mensajeNocheSeis,
+                    ]
+                  : temperaturaActual >= 30
+                    ? [
+                        labels.mensajeCalorUno,
+                        labels.mensajeCalorDos,
+                        labels.mensajeCalorTres,
+                        labels.mensajeCalorCuatro,
+                        labels.mensajeCalorCinco,
+                        labels.mensajeCalorSeis,
+                      ]
+                    : temperaturaActual <= 15
+                      ? [
+                          labels.mensajeFrioUno,
+                          labels.mensajeFrioDos,
+                          labels.mensajeFrioTres,
+                          labels.mensajeFrioCuatro,
+                          labels.mensajeFrioCinco,
+                          labels.mensajeFrioSeis,
+                        ]
+                      : codigoActual === 0
+                        ? [
+                            labels.tipSol,
+                            labels.mensajeSolUno,
+                            labels.mensajeSolDos,
+                            labels.mensajeSolTres,
+                            labels.mensajeSolCuatro,
+                            labels.mensajeSolCinco,
+                            labels.mensajeSolSeis,
+                            labels.mensajeSolSiete,
+                            labels.mensajeSolOcho,
+                          ]
+                        : [
+                            labels.tipParcial,
+                            labels.mensajeParcialUno,
+                            labels.mensajeParcialDos,
+                            labels.mensajeParcialTres,
+                            labels.mensajeParcialCuatro,
+                            labels.mensajeParcialCinco,
+                            labels.mensajeParcialSeis,
+                            labels.mensajeParcialSiete,
+                          ];
+
+        const crearSelectorMensajes = (mensajes: string[]) => {
+          const opciones = [...new Set(mensajes.filter(Boolean))];
+          let bolsa: string[] = [];
+          let anterior: string | undefined;
+
+          return () => {
+            if (bolsa.length === 0) {
+              bolsa = [...opciones];
+              for (let indice = bolsa.length - 1; indice > 0; indice--) {
+                const destino = Math.floor(Math.random() * (indice + 1));
+                [bolsa[indice], bolsa[destino]] = [bolsa[destino], bolsa[indice]];
+              }
+
+              if (bolsa.length > 1 && bolsa[bolsa.length - 1] === anterior) {
+                [bolsa[0], bolsa[bolsa.length - 1]] = [bolsa[bolsa.length - 1], bolsa[0]];
+              }
+            }
+
+            const siguiente = bolsa.pop();
+            if (siguiente) anterior = siguiente;
+            return siguiente || info.tip;
+          };
+        };
+
+        const elegirMensaje = crearSelectorMensajes(mensajesLocales);
+        const mensajeActual = elegirMensaje();
+        if (tipEl) tipEl.textContent = mensajeActual || info.tip || "";
+
+        // La burbuja cambia de comentario: parece que el personaje conversa con quien visita.
+        const mostrarBurbuja = () => {
+          if (!burbuja || !panel?.hidden || raizClima.dataset.oculto === "true") return;
+          if (burbujaTexto) burbujaTexto.textContent = elegirMensaje() || info.tip || "";
+          burbuja.dataset.visible = "true";
+          window.setTimeout(ocultarBurbuja, 5500);
+        };
+        window.setTimeout(mostrarBurbuja, 2500);
+        window.setInterval(mostrarBurbuja, 22000);
+
+        if (sensEl && Number.isFinite(data.current?.apparent_temperature)) {
+          sensEl.textContent = `${Math.round(data.current.apparent_temperature)}°`;
+        }
+
+        if (humEl && Number.isFinite(data.current?.relative_humidity_2m)) {
+          humEl.textContent = `${Math.round(data.current.relative_humidity_2m)}%`;
+        }
+
+        if (vientoEl && Number.isFinite(data.current?.wind_speed_10m)) {
+          vientoEl.textContent = `${Math.round(data.current.wind_speed_10m)} km/h`;
+        }
+
+        if (atardecerEl && Array.isArray(data.daily?.sunset) && data.daily.sunset[0]) {
+          const horaSunset = String(data.daily.sunset[0]).split("T")[1]?.slice(0, 5);
+          if (horaSunset) atardecerEl.textContent = horaSunset;
+        }
+
+        if (diasCont && Array.isArray(data.daily?.time)) {
+          const dias = (data.daily.time as string[]).slice(1, 6);
+          const mins = (data.daily.temperature_2m_min as number[]).slice(1, 6);
+          const maxs = (data.daily.temperature_2m_max as number[]).slice(1, 6);
+          const minGlobal = Math.min(...mins);
+          const maxGlobal = Math.max(...maxs);
+          const rango = Math.max(1, maxGlobal - minGlobal);
+          const fmtDia = new Intl.DateTimeFormat(locale, { weekday: "short", day: "numeric" });
+
+          diasCont.innerHTML = "";
+
+          dias.forEach((fechaStr, idx) => {
+            const i = idx + 1;
+            const [y, m, d] = fechaStr.split("-").map(Number);
+            const fecha = new Date(y, m - 1, d);
+            const nombreDia =
+              idx === 0
+                ? (labels.manana ?? "Mañana")
+                : fmtDia.format(fecha).replace(".", "");
+            const tMin = Math.round(mins[idx]);
+            const tMax = Math.round(maxs[idx]);
+            const infoDia = infoClima(Number(data.daily.weather_code[i] ?? 0), 1);
+            const izq = ((mins[idx] - minGlobal) / rango) * 100;
+            const ancho = Math.max(14, ((maxs[idx] - mins[idx]) / rango) * 100);
+
+            const row = document.createElement("div");
+            row.className = "grid grid-cols-[5.5rem_1.5rem_1fr_4.25rem] items-center gap-2 rounded-xl bg-white px-2.5 py-1.5 shadow-2xs ring-1 ring-[#2a1b13]/5";
+            row.classList.add("clima-pronostico-entrada");
+            row.style.animationDelay = `${idx * 45}ms`;
+            row.innerHTML = `
+              <span class="truncate font-semibold capitalize text-[#2a1b13]">${nombreDia}</span>
+              <span class="text-sm leading-none text-center" aria-hidden="true">${infoDia.emoji}</span>
+              <div class="relative h-1.5 w-full overflow-hidden rounded-full bg-[#2a1b13]/10" aria-hidden="true">
+                <div class="absolute inset-y-0 rounded-full bg-gradient-to-r from-[#FFC107] to-[#B34D36]" style="left:${izq}%;width:${Math.min(100 - izq, ancho)}%"></div>
+              </div>
+              <span class="text-right font-bold tabular-nums text-[#1E3A2F]">
+                <span class="font-medium text-[#2a1b13]/55">${tMin}°</span> / ${tMax}°
+              </span>
+            `;
+            diasCont.appendChild(row);
+          });
+        }
+
+        raizClima.dataset.climaCargando = "false";
+        raizClima.setAttribute("aria-busy", "false");
+      })
+      .catch(() => {
+        raizClima.hidden = true;
+        raizClima.dataset.climaCargando = "false";
+        raizClima.setAttribute("aria-busy", "false");
+      });
+  }
+</script>
+
+<style>
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-skeleton] {
+    color: transparent !important;
+    background: linear-gradient(100deg, #e8e4da 30%, #f7f4ec 50%, #e8e4da 70%);
+    background-size: 220% 100%;
+    animation: clima-skeleton 1.5s ease-in-out infinite;
+    border-radius: 0.5rem;
+  }
+
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-panel-temp] {
+    min-width: 3.5rem;
+    min-height: 1.75rem;
+  }
+
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-panel-estado] {
+    min-width: 5rem;
+    min-height: 0.8rem;
+  }
+
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-temp] {
+    min-width: 1.75rem;
+    min-height: 0.75rem;
+  }
+
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-tip] {
+    min-height: 2.75rem;
+  }
+
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-dias] {
+    min-height: 8rem;
+    background: repeating-linear-gradient(
+      to bottom,
+      #e8e4da 0,
+      #e8e4da 1.25rem,
+      transparent 1.25rem,
+      transparent 1.6rem
+    );
+    background-size: 220% 100%;
+    animation: clima-skeleton 1.5s ease-in-out infinite;
+    border-radius: 0.75rem;
+  }
+
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-dias] > *,
+  [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-escena-mini] > svg {
+    visibility: hidden;
+  }
+
+  @keyframes clima-skeleton {
+    to {
+      background-position: -220% 0;
+    }
+  }
+
+  [data-widget-clima-raiz][data-oculto="true"] {
+    opacity: 0;
+    translate: 0 0.75rem;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  [data-widget-clima-raiz][data-foco="true"] {
+    z-index: 50;
+  }
+
+  [data-clima-overlay][data-visible="false"] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  [data-clima-overlay][data-visible="true"] {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  [data-panel-clima]:not([hidden]) {
+    animation: clima-panel-entrada 220ms ease-out both;
+    transform-origin: bottom right;
+  }
+
+  [data-clima-burbuja][data-visible="false"] {
+    opacity: 0;
+    transform: translateX(0.25rem);
+  }
+
+  [data-clima-burbuja][data-visible="true"] {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  :global(.clima-rayos) {
+    animation: clima-luz-suave 8s ease-in-out infinite;
+  }
+
+  :global(.clima-luna) {
+    animation: clima-luna 8s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  :global(.clima-sol-pulso) {
+    animation: clima-pulso-sol 7s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  :global(.clima-mate) {
+    animation: clima-mate-tranquilo 8s ease-in-out infinite;
+    transform-box: view-box;
+  }
+
+  :global(.clima-estrella) {
+    animation: clima-luz-suave 7s ease-in-out infinite;
+  }
+
+  :global(.clima-nube) {
+    animation: clima-nube 6s ease-in-out infinite;
+    transform-box: view-box;
+  }
+
+  :global(.clima-bruma) {
+    animation: clima-bruma 7s ease-in-out infinite alternate;
+  }
+
+  :global(.clima-paraguas) {
+    animation: clima-paraguas 7s ease-in-out infinite;
+    transform-box: view-box;
+  }
+
+  :global(.clima-gotas) {
+    animation: clima-gotas 3s ease-in infinite;
+  }
+
+  :global(.clima-pronostico-entrada) {
+    animation: clima-pronostico-entrada 220ms ease-out both;
+  }
+
+  :global(.clima-relampago) {
+    animation: clima-relampago 8s linear infinite;
+  }
+
+  :global(.clima-vapor) {
+    animation: clima-vapor 4.5s ease-in-out infinite;
+  }
+
+  :global(.clima-garza) {
+    animation: clima-garza 6s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: bottom center;
+  }
+
+  :global(.clima-garza-vuelo) {
+    animation: clima-garza-vuelo 10s ease-in-out infinite;
+  }
+
+  @keyframes clima-pulso-sol {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.015); }
+  }
+
+  @keyframes clima-mate-tranquilo {
+    0%, 100% { transform: rotate(0); }
+    50% { transform: rotate(-1deg); }
+  }
+
+  @keyframes clima-luz-suave {
+    0%, 100% { opacity: 0.72; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes clima-nube {
+    0%, 100% { transform: translateX(-0.25px); }
+    50% { transform: translateX(0.5px); }
+  }
+
+  @keyframes clima-bruma {
+    from { transform: translateX(-1px); opacity: 0.65; }
+    to { transform: translateX(1px); opacity: 0.9; }
+  }
+
+  @keyframes clima-paraguas {
+    0%, 100% { transform: rotate(-.5deg); }
+    50% { transform: rotate(.5deg); }
+  }
+
+  @keyframes clima-gotas {
+    0% { opacity: 0.4; transform: translateY(-1px); }
+    70% { opacity: 0.9; }
+    100% { opacity: 0.25; transform: translateY(2px); }
+  }
+
+  @keyframes clima-relampago {
+    0%, 95%, 100% { opacity: 0.2; }
+    96% { opacity: 1; }
+    97% { opacity: 0.3; }
+  }
+
+  @keyframes clima-luna {
+    0%, 100% { transform: rotate(-1deg) translateY(0); }
+    50% { transform: rotate(1deg) translateY(-.5px); }
+  }
+
+  @keyframes clima-vapor {
+    0% { opacity: 0; transform: translateY(3px); }
+    40% { opacity: .9; }
+    100% { opacity: 0; transform: translateY(-4px); }
+  }
+
+  @keyframes clima-garza {
+    0%, 100% { transform: rotate(-.5deg); }
+    50% { transform: rotate(.5deg) translateY(-.5px); }
+  }
+
+  @keyframes clima-garza-vuelo {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-1px, -1px); }
+  }
+
+  @keyframes clima-panel-entrada {
+    from { opacity: 0; transform: translateY(0.35rem) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes clima-pronostico-entrada {
+    from { opacity: 0; transform: translateY(0.15rem); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-widget-clima-raiz][data-oculto="true"] {
+      translate: none;
+    }
+
+    [data-widget-clima-raiz][data-clima-cargando="true"] [data-clima-skeleton] {
+      animation: none;
+    }
+
+    :global(.clima-rayos),
+    :global(.clima-luna),
+    :global(.clima-sol-pulso),
+    :global(.clima-mate),
+    :global(.clima-estrella),
+    :global(.clima-nube),
+    :global(.clima-bruma),
+    :global(.clima-paraguas),
+    :global(.clima-gotas),
+    :global(.clima-relampago),
+    :global(.clima-pronostico-entrada),
+    :global(.clima-vapor),
+    :global(.clima-garza),
+    :global(.clima-garza-vuelo) {
+      animation: none;
+    }
+
+    [data-panel-clima]:not([hidden]) {
+      animation: none;
+    }
+
+    [data-clima-overlay] {
+      transition: none;
+    }
+  }
+</style>

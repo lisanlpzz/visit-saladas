@@ -1,0 +1,97 @@
+---
+import TransportePlanner from "../react/transporte-planner";
+import { obtenerInformacionTransporte } from "../../data/transporte";
+import { obtenerIdioma } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const informacionTransporte = obtenerInformacionTransporte(idioma);
+---
+
+<section
+  class="relative overflow-hidden bg-[#F9F6F0] px-5 py-16 text-[#1E3A2F] sm:px-8 sm:py-20"
+  aria-labelledby="horarios-transporte-title"
+>
+  <div
+    class="pointer-events-none absolute -left-32 top-40 hidden size-96 rounded-full bg-[radial-gradient(circle,rgba(255,193,7,0.12)_0%,transparent_70%)] sm:block"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="pointer-events-none absolute -right-24 bottom-32 hidden size-80 rounded-full bg-[radial-gradient(circle,rgba(179,77,54,0.09)_0%,transparent_70%)] sm:block"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative mx-auto max-w-7xl">
+    <TransportePlanner client:load idioma={idioma} />
+
+    <div class="mt-14 grid gap-5 md:grid-cols-2">
+      <article
+        class="contact-card group rounded-3xl border border-[#1E3A2F]/12 bg-white p-5 shadow-xs transition-[transform,border-color] duration-200 md:hover:-translate-y-0.5 md:hover:border-[#1E3A2F]/30 sm:p-6"
+      >
+        <div class="flex items-start gap-4">
+          <span
+            class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#1E3A2F] text-[#FFC107] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" /><path d="M13 5v2M13 17v2M13 11v2" />
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-lg font-bold">
+              {informacionTransporte.boleteria.nombre}
+              <span class="font-medium text-[#40564A]">({informacionTransporte.boleteria.localidad})</span>
+            </h3>
+            <a
+              href={`tel:${informacionTransporte.boleteria.telefono}`}
+              class="mt-2 inline-flex min-h-11 items-center gap-2 rounded-lg font-semibold text-[#B34D36] underline decoration-[#B34D36]/50 underline-offset-4 transition-colors hover:text-[#1E3A2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B34D36]"
+            >
+              {informacionTransporte.boleteria.telefonoVisible}
+            </a>
+          </div>
+        </div>
+      </article>
+      <article
+        class="contact-card group rounded-3xl border border-[#1E3A2F]/12 bg-white p-5 shadow-xs transition-[transform,border-color] duration-200 md:hover:-translate-y-0.5 md:hover:border-[#1E3A2F]/30 sm:p-6"
+      >
+        <div class="flex items-start gap-4">
+          <span
+            class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#FFC107] text-[#1E3A2F] transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 6v6M15 6v6M2 12h19.6M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3" /><circle cx="7" cy="18" r="2" /><path d="M9 18h5" /><circle cx="16" cy="18" r="2" />
+            </svg>
+          </span>
+          <div>
+            <h3 class="text-lg font-bold">{informacionTransporte.puertaAPuerta.titulo}</h3>
+            <p class="mt-1 text-sm text-[#40564A]">{informacionTransporte.puertaAPuerta.empresa}</p>
+            <div class="mt-1 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-5">
+              {informacionTransporte.puertaAPuerta.telefonos.map((telefono) => (
+                <a
+                  href={`tel:${telefono.numero}`}
+                  class="inline-flex min-h-11 items-center font-semibold text-[#B34D36] underline decoration-[#B34D36]/50 underline-offset-4 transition-colors hover:text-[#1E3A2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B34D36]"
+                >
+                  {telefono.visible} <span class="ml-1 text-sm font-normal text-[#40564A]">({telefono.tipo})</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="mt-6 max-w-3xl text-sm leading-relaxed text-[#40564A]">
+      {informacionTransporte.notaHorarios}
+    </p>
+  </div>
+</section>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    .contact-card {
+      transition: none;
+    }
+  }
+</style>

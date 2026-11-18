@@ -1,0 +1,12 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioAlojamientos from "../../components/alojamientos/inicio-alojamientos.astro";
+import AlojamientosCard from "../../components/alojamientos/alojamientos-card.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Alojamientos | Visit Saladas")} description={t("Encontrá alojamientos en Saladas, Corrientes, y elegí dónde descansar para disfrutar tu visita a la ciudad.")}>
+  <main><InicioAlojamientos /><AlojamientosCard /></main>
+</Layout>

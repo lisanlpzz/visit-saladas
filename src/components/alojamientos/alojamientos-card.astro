@@ -1,0 +1,55 @@
+---
+import { Image } from "astro:assets";
+import { obtenerAlojamientos } from "../../data/alojamientos";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const alojamientos = obtenerAlojamientos(idioma);
+---
+
+<section class="bg-[#F9F6F0] px-5 py-12 text-[#2a1b13] sm:px-8 sm:py-16" aria-labelledby="alojamientos-list-title">
+  <div class="mx-auto max-w-7xl">
+    <div class="mb-7 max-w-2xl sm:mb-9">
+      <h2 id="alojamientos-list-title" class="mt-2 text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
+        {t("Encontrá tu lugar para quedarte")}
+      </h2>
+    </div>
+
+    <div class="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
+      {alojamientos.map((alojamiento) => (
+        <article class="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#e4d7c1] bg-[#fffdf8] shadow-[0_14px_38px_-28px_rgba(42,27,19,0.45)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_48px_-28px_rgba(42,27,19,0.5)] motion-reduce:transform-none motion-reduce:transition-none">
+          <div class="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-[#fffdf8]">
+            <Image
+              src={alojamiento.imagen}
+              alt={alojamiento.alt}
+              class:list={[
+                "absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none motion-reduce:transition-none",
+                alojamiento.esLogo ? "object-contain bg-white p-8" : "object-cover",
+              ]}
+              style="height: 100%; width: 100%;"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="flex flex-1 flex-col p-5 sm:p-6">
+            <h3 class="mt-2 text-xl font-bold tracking-tight">{alojamiento.nombre}</h3>
+            <p class="mt-2 flex-1 text-sm leading-relaxed text-[#604b3d]">{alojamiento.descripcion}</p>
+            <a
+              href={alojamiento.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded-full bg-[#FFC107] px-5 text-sm font-bold text-[#2a1b13] transition-colors hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#B34D36]"
+              aria-label={`${t("Más información sobre")} ${alojamiento.nombre} ${t("(abre en una pestaña nueva)")}`}
+            >
+              {t("Más información")}
+              <svg aria-hidden="true" viewBox="0 0 20 20" class="size-4 fill-none stroke-current transition-transform group-hover:translate-x-0.5" stroke-width="1.7">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h13m-5-5 5 5-5 5" />
+              </svg>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

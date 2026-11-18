@@ -1,0 +1,12 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioDia from "../../components/un-dia-en-saladas/inicio-dia.astro";
+import Dia from "../../components/un-dia-en-saladas/dia.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Un día en Saladas | Visit Saladas")} description={t("Historia por la mañana, sabores del litoral y una tarde junto al agua. Descubrí Saladas a tu ritmo.")}>
+  <main><InicioDia /><Dia /></main>
+</Layout>

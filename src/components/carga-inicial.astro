@@ -1,0 +1,136 @@
+---
+import { Spinner } from "./react/spinner";
+import { obtenerIdioma, traducir } from "../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+---
+
+<div
+  id="carga-inicial"
+  class="fixed inset-0 z-[100] grid place-items-center bg-black transition-opacity duration-500"
+  aria-label={t("Cargando Visit Saladas")}
+>
+  <div class="flex flex-col items-center gap-5">
+    <span
+      role="img"
+      aria-label="Visit Saladas"
+      class="size-28 animate-pulse bg-[#F9F6F0] sm:size-36"
+      style="mask: url('/logo.webp') center / contain no-repeat; -webkit-mask: url('/logo.webp') center / contain no-repeat;"
+    ></span>
+    <Spinner className="size-7 text-[#f5ecd8]/75" aria-label={t("Cargando imágenes")} />
+  </div>
+</div>
+
+<script>
+  const initializeInitialLoader = () => {
+    const loader = document.getElementById("carga-inicial");
+
+    if (!loader) {
+      console.error("No se pudo inicializar la pantalla de carga: falta el loader.");
+      return;
+    }
+
+    let finished = false;
+    let timeoutId = 0;
+    let settleTimeoutId = 0;
+    let pendingImages = 0;
+    let pageLoaded = document.readyState === "complete";
+    const trackedImages = new WeakSet<HTMLImageElement>();
+    let observer: MutationObserver | null = null;
+
+    const hideLoader = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeoutId);
+      window.clearTimeout(settleTimeoutId);
+      observer?.disconnect();
+      loader.classList.add("pointer-events-none", "opacity-0");
+      window.setTimeout(() => loader.remove(), 550);
+    };
+
+    const hideWhenReady = () => {
+      if (!pageLoaded || pendingImages > 0 || finished) return;
+
+      window.clearTimeout(settleTimeoutId);
+      settleTimeoutId = window.setTimeout(hideLoader, 200);
+    };
+
+    const shouldWaitForImage = (image: HTMLImageElement) => {
+      if (image.loading !== "lazy") return true;
+      const bounds = image.getBoundingClientRect();
+      return bounds.bottom > 0 && bounds.top < window.innerHeight;
+    };
+
+    const trackImage = (image: HTMLImageElement) => {
+      if (trackedImages.has(image) || !shouldWaitForImage(image)) return;
+      trackedImages.add(image);
+      pendingImages += 1;
+
+      let handled = false;
+      const finish = async (failed: boolean) => {
+        if (handled) return;
+        handled = true;
+
+        if (failed || image.naturalWidth === 0) {
+          console.error(`No se pudo cargar una imagen de la página: ${image.currentSrc || image.src}`);
+        } else {
+          try {
+            await image.decode();
+          } catch (error: unknown) {
+            console.error(`No se pudo decodificar una imagen de la página: ${image.currentSrc || image.src}`, error);
+          }
+        }
+
+        pendingImages -= 1;
+        hideWhenReady();
+      };
+
+      if (image.complete) {
+        void finish(image.naturalWidth === 0);
+        return;
+      }
+
+      image.addEventListener("load", () => void finish(false), { once: true });
+      image.addEventListener("error", () => void finish(true), { once: true });
+    };
+
+    const scanImages = (node: ParentNode = document) => {
+      if (node instanceof HTMLImageElement) trackImage(node);
+      node.querySelectorAll("img").forEach((image) => trackImage(image));
+    };
+
+    observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof Element) scanImages(node);
+        });
+      });
+      hideWhenReady();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    scanImages();
+
+    window.addEventListener(
+      "load",
+      () => {
+        pageLoaded = true;
+        scanImages();
+        hideWhenReady();
+      },
+      { once: true },
+    );
+    if (pageLoaded) hideWhenReady();
+
+    timeoutId = window.setTimeout(() => {
+      console.error("La carga de imágenes de la página demoró demasiado; se muestra el sitio igualmente.");
+      hideLoader();
+    }, 12000);
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeInitialLoader, { once: true });
+  } else {
+    initializeInitialLoader();
+  }
+</script>

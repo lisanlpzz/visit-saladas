@@ -1,0 +1,27 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PortadaEntrada from "../components/inicio/portada-entrada.astro";
+import ProximoEventoBanner from "../components/inicio/proximo-evento-banner.astro";
+import Experiencias from "../components/inicio/experiencias.astro";
+import VerGaleria from "../components/inicio/ver-galeria.astro";
+import RedesSociales from "../components/inicio/redes-sociales.astro";
+import ParteFinal from "../components/inicio/parte-final.astro";
+import WidgetsFlotantes from "../components/inicio/widgets-flotantes.astro";
+---
+
+<Layout
+	title="Visit Saladas | Descubrí Saladas"
+	description="Descubrí Saladas, Corrientes: sus paisajes, historia, cultura y experiencias para planificar tu próxima visita."
+	showLoader
+	hideScrollbar
+>
+	<main>
+		<PortadaEntrada />
+		<ProximoEventoBanner />
+		<Experiencias />
+		<VerGaleria />
+		<RedesSociales />
+		<ParteFinal />
+	</main>
+	<WidgetsFlotantes />
+</Layout>

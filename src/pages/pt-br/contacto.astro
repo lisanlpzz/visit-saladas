@@ -1,0 +1,12 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ContactoInicio from "../../components/contacto/contacto-inicio.astro";
+import ContactoRedes from "../../components/contacto/contacto-redes.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Contacto | Visit Saladas")} description={t("Contactate con Visit Saladas para planificar tu visita, consultar información turística o sumar tu emprendimiento.")}>
+  <main><ContactoInicio /><ContactoRedes /></main>
+</Layout>

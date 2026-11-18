@@ -1,0 +1,12 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import InicioTransporte from "../../components/transporte/inicio-transporte.astro";
+import TablasHorario from "../../components/transporte/tablas-horario.astro";
+import { obtenerIdioma, traducir } from "../../i18n";
+
+const t = (texto: string) => traducir(texto, obtenerIdioma(Astro.url.pathname));
+---
+
+<Layout title={t("Visit Saladas | Transporte")} description={t("Consultá opciones y horarios de transporte para viajar hacia Saladas, Corrientes, y moverte desde la ciudad.")}>
+  <main><InicioTransporte /><TablasHorario /></main>
+</Layout>

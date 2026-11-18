@@ -1,0 +1,137 @@
+---
+import { Image } from "astro:assets";
+import garzaImage from "../../images/garza-blanca.avif";
+import { localizarRuta, obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+---
+
+<section
+  id="galeria"
+  class="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-[#291b12] px-5 py-24 text-white sm:px-8"
+  aria-labelledby="galeria-title"
+  data-galeria-reveal
+>
+  <Image
+    src={garzaImage}
+    alt={t("Garza en los paisajes naturales de Saladas")}
+    class="absolute inset-0 -z-20 h-full w-full object-cover"
+    data-galeria-image
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(20,14,10,0.82)_0%,rgba(20,14,10,0.52)_55%,rgba(20,14,10,0.2)_100%)]"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/45 via-transparent to-black/15"></div>
+
+  <div class="mx-auto w-full max-w-7xl">
+    <div class="max-w-2xl">
+      <p class="mb-4 text-xs font-bold tracking-[0.22em] text-[#FFC107]" data-galeria-item="eyebrow">{t("POSTALES DE SALADAS")}</p>
+      <h2
+        id="galeria-title"
+        class="text-balance text-[clamp(2.75rem,7vw,5.75rem)] font-extrabold leading-[0.98] tracking-[-0.055em]"
+        data-galeria-item="title"
+      >
+        {t("Un rincón correntino que enamora")}
+      </h2>
+      <p class="mt-6 max-w-xl text-balance text-base leading-relaxed text-white/85 sm:text-xl" data-galeria-item="copy">
+        {t("Desde la laguna Soto hasta los senderos rurales, Saladas te invita a vivirla con todos los sentidos.")}
+      </p>
+      <div class="mt-8 w-fit" data-galeria-item="action">
+        <a
+          class="inline-flex min-h-12 items-center gap-4 rounded-full bg-[#FFC107] px-7 text-sm font-bold text-[#291b12] shadow-[0_6px_20px_rgba(0,0,0,0.25)] transition-[background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:bg-[#e0a800] hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          href={localizarRuta("/galeria", idioma)}
+        >
+          {t("Ver más imágenes")} <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const initializeGalleryReveal = () => {
+    document.querySelectorAll<HTMLElement>("[data-galeria-reveal]").forEach((section) => {
+      if (section.dataset.revealInitialized === "true") return;
+      section.dataset.revealInitialized = "true";
+
+      if (!("IntersectionObserver" in window)) {
+        section.dataset.galeriaReveal = "visible";
+        return;
+      }
+
+      const bounds = section.getBoundingClientRect();
+      if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+        section.dataset.galeriaReveal = "visible";
+        return;
+      }
+
+      section.dataset.galeriaReveal = "pending";
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!entry?.isIntersecting) return;
+        section.dataset.galeriaReveal = "visible";
+        observer.unobserve(section);
+      }, { threshold: 0.15 });
+
+      observer.observe(section);
+    });
+  };
+
+  initializeGalleryReveal();
+  document.addEventListener("astro:page-load", initializeGalleryReveal);
+</script>
+
+<style>
+  [data-galeria-reveal="pending"] [data-galeria-image] {
+    opacity: 0.65;
+    transform: scale(1.06);
+  }
+
+  [data-galeria-reveal="visible"] [data-galeria-image] {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 1400ms ease-out,
+      transform 2000ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-galeria-reveal="pending"] [data-galeria-item] {
+    opacity: 0;
+    transform: translate3d(-1.5rem, 0, 0);
+  }
+
+  [data-galeria-reveal="visible"] [data-galeria-item] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    transition:
+      opacity 850ms ease-out,
+      transform 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-galeria-reveal="visible"] [data-galeria-item="eyebrow"] {
+    transition-delay: 100ms;
+  }
+
+  [data-galeria-reveal="visible"] [data-galeria-item="title"] {
+    transition-delay: 240ms;
+  }
+
+  [data-galeria-reveal="visible"] [data-galeria-item="copy"] {
+    transition-delay: 400ms;
+  }
+
+  [data-galeria-reveal="visible"] [data-galeria-item="action"] {
+    transition-delay: 560ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-galeria-reveal="pending"] [data-galeria-image],
+    [data-galeria-reveal="pending"] [data-galeria-item],
+    [data-galeria-reveal="visible"] [data-galeria-image],
+    [data-galeria-reveal="visible"] [data-galeria-item] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

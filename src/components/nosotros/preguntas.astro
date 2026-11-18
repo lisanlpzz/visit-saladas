@@ -1,0 +1,46 @@
+---
+import { obtenerIdioma, traducir } from "../../i18n";
+import { enlaceWhatsApp } from "../../data/contacto";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+const urlWhatsApp = enlaceWhatsApp(t("Hola, quiero sumarme al proyecto Visit Saladas."));
+---
+
+<section class="bg-[#F9F6F0] px-5 py-16 text-[#2a1b13] sm:px-8 sm:py-24">
+  <div class="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-24">
+    <div>
+      <h2 class="text-balance text-3xl font-extrabold tracking-[-0.045em] sm:text-4xl">
+        {t("¿Qué hacemos desde Visit Saladas?")}
+      </h2>
+      <div class="mt-8 space-y-5 text-base leading-relaxed text-[#2a1b13]/80 sm:text-lg">
+        <p>{t("Creamos contenido visual (fotografías y videos) sobre la ciudad.")}</p>
+        <p>{t("Relevamos y difundimos atractivos turísticos y culturales.")}</p>
+        <p>{t("Ofrecemos servicios audiovisuales a prestadores turísticos.")}</p>
+        <p>{t("Generamos redes con emprendedores locales.")}</p>
+        <p>{t("Compartimos las experiencias en redes sociales y en este sitio web.")}</p>
+      </div>
+    </div>
+
+    <div class="self-start border-t-2 border-[#B34D36] pt-6 lg:mt-1">
+      <h2 class="mt-4 text-3xl font-extrabold tracking-[-0.045em] sm:text-4xl">
+        {t("¿Querés sumarte?")}
+      </h2>
+      <p class="mt-5 text-base leading-relaxed text-[#2a1b13]/75 sm:text-lg">
+        {t("Si sos parte del turismo local, tenés un emprendimiento o simplemente te apasiona Saladas, este espacio también es para vos.")}
+      </p>
+      <p class="mt-3 text-base font-semibold leading-relaxed text-[#2a1b13] sm:text-lg">
+        {t("¡Contactanos y formá parte del proyecto!")}
+      </p>
+      <a
+        href={urlWhatsApp}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-7 inline-flex min-h-12 items-center gap-3 rounded-full bg-[#FFC107] px-6 text-sm font-bold text-[#2a1b13] transition-colors hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B34D36]"
+        aria-label={t("Contactar a Visit Saladas por WhatsApp para sumarte al proyecto (abre en una pestaña nueva)")}
+      >
+        {t("Contactar por WhatsApp")}
+      </a>
+    </div>
+  </div>
+</section>

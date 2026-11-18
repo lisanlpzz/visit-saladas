@@ -1,0 +1,71 @@
+---
+/* const colaboradores = [
+  { nombre: "Visit Saladas", url: "https://www.instagram.com/visitsaladas" },
+  { nombre: "Urbana 90.5", url: "https://www.instagram.com/urbana90.5/" },
+  { nombre: "Cabral Clasificados", url: "https://www.facebook.com/share/17DgmaMjrT/" },
+  { nombre: "Marcos Portillo Fotógrafo", url: "https://www.instagram.com/marcosportillo.ph/" },
+  { nombre: "PerLab Laboratorio", url: "https://www.instagram.com/perlab.analisis/" },
+  { nombre: "Agropecuaria Ñu Potí", url: "https://www.instagram.com/agropecuarianupoti/" },
+  { nombre: "Lisandro Lopez", url: "https://www.instagram.com/lisanlpz"},
+  { nombre: "Che Roga Duplex", url: "https://www.instagram.com/cherogaduplex/" },
+  { nombre: "El Buen Gusto Restaurante", url: "https://www.instagram.com/buengusto_saladas/" },
+  { nombre: "Hotel Florida", url: "https://www.instagram.com/hotelfloridasaladas/" },
+];
+  - Desahibilitado por ahora*/
+  
+  
+import { localizarRuta, obtenerIdioma, traducir } from "../../i18n";
+
+const idioma = obtenerIdioma(Astro.url.pathname);
+const t = (texto: string) => traducir(texto, idioma);
+---
+
+<section
+  class="bg-[linear-gradient(180deg,#1E3A2F_0%,#14291F_48%,#000000_100%)] px-5 pb-40 pt-24 text-center text-[#f5ecd8] sm:px-8 sm:pb-48 sm:pt-28"
+  aria-labelledby="parte-final-title"
+>
+  <div class="mx-auto max-w-4xl">
+    <span
+      role="img"
+      aria-label={t("Visit Saladas")}
+      class="mx-auto mb-7 block size-20 bg-[#FFC107] sm:size-24"
+      style="mask: url('/logo.webp') center / contain no-repeat; -webkit-mask: url('/logo.webp') center / contain no-repeat;"
+    ></span>
+    <h2
+      id="parte-final-title"
+      class="text-balance text-4xl font-extrabold leading-tight tracking-[-0.04em] sm:text-5xl"
+    >
+      {t("¿Listo para conocer Saladas?")}
+    </h2>
+    <p class="mx-auto mt-5 max-w-2xl text-balance text-base leading-relaxed text-[#f5ecd8]/75 sm:text-lg">
+      {t("Explorá su historia, caminá sus senderos y descubrí su esencia.")}
+    </p>
+
+    <nav aria-label={t("Explorar secciones")} class="mt-9 flex flex-wrap justify-center gap-3">
+      <a
+        href={localizarRuta("/contacto", idioma)}
+        class="inline-flex min-h-12 items-center justify-center rounded-full bg-[#FFC107] px-6 text-sm font-bold text-[#291b12] transition-colors hover:bg-[#e0a800] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFC107]"
+      >
+        {t("Contacto")}
+      </a>
+      <a
+        href={localizarRuta("/nosotros", idioma)}
+        class="inline-flex min-h-12 items-center justify-center rounded-full border border-[#f5ecd8]/25 px-6 text-sm font-semibold text-[#f5ecd8] transition-colors hover:border-[#FFC107]/70 hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFC107]"
+      >
+        {t("Nosotros")}
+      </a>
+      <a
+        href={localizarRuta("/mapa", idioma)}
+        class="inline-flex min-h-12 items-center justify-center rounded-full border border-[#f5ecd8]/25 px-6 text-sm font-semibold text-[#f5ecd8] transition-colors hover:border-[#FFC107]/70 hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFC107]"
+      >
+        {t("Mapa")}
+      </a>
+      <a
+        href={localizarRuta("/eventos", idioma)}
+        class="inline-flex min-h-12 items-center justify-center rounded-full border border-[#f5ecd8]/25 px-6 text-sm font-semibold text-[#f5ecd8] transition-colors hover:border-[#FFC107]/70 hover:bg-white/10 hover:text-[#FFC107] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFC107]"
+      >
+        {t("Eventos")}
+      </a>
+    </nav>
+</div>
+</section>
