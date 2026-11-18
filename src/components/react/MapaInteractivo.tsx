@@ -4,7 +4,6 @@ import "leaflet/dist/leaflet.css";
 import {
   Banknote,
   BedDouble,
-  Camera,
   ChevronLeft,
   ChevronRight,
   Church,
@@ -90,8 +89,6 @@ export default function MapaInteractivo({ lugares, categorias, idioma }: MapaInt
   const [busqueda, setBusqueda] = useState("");
   const [lugarSeleccionadoId, setLugarSeleccionadoId] = useState<string | null>(null);
   const [listaMovilAbierta, setListaMovilAbierta] = useState(false);
-  const [indiceFoto, setIndiceFoto] = useState(0);
-  const [tabMedia, setTabMedia] = useState<"fotos" | "video">("fotos");
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const categoriesScrollRef = useRef<HTMLDivElement>(null);
@@ -120,14 +117,6 @@ export default function MapaInteractivo({ lugares, categorias, idioma }: MapaInt
     () => lugares.find((l) => l.id === lugarSeleccionadoId) ?? null,
     [lugares, lugarSeleccionadoId],
   );
-
-  // Reiniciar estado de multimedia al cambiar de lugar
-  useEffect(() => {
-    setIndiceFoto(0);
-    if (lugarSeleccionado) {
-      setTabMedia(lugarSeleccionado.imagenes.length > 0 ? "fotos" : "video");
-    }
-  }, [lugarSeleccionado?.id]);
 
   // Inicializar Leaflet dinámicamente en el cliente
   useEffect(() => {
@@ -496,7 +485,7 @@ export default function MapaInteractivo({ lugares, categorias, idioma }: MapaInt
               <ul className="space-y-1.5">
                 {lugaresFiltrados.map((lugar) => {
                   const seleccionado = lugar.id === lugarSeleccionadoId;
-                  const tieneMedia = lugar.imagenes.length > 0 || Boolean(lugar.youtubeId);
+                  const tieneMedia = Boolean(lugar.youtubeId);
                   return (
                     <li key={lugar.id}>
                       <button
@@ -536,7 +525,7 @@ export default function MapaInteractivo({ lugares, categorias, idioma }: MapaInt
                             }`}
                             aria-hidden="true"
                           >
-                            {lugar.youtubeId ? <Play className="size-3.5" /> : <Camera className="size-3.5" />}
+                            <Play className="size-3.5" />
                           </span>
                         )}
                       </button>
@@ -657,83 +646,15 @@ export default function MapaInteractivo({ lugares, categorias, idioma }: MapaInt
               className="absolute inset-x-3 bottom-3 z-[500] max-h-[calc(100%-1.5rem)] overflow-y-auto rounded-2xl border border-[#2a1b13]/12 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.28)] sm:left-4 sm:right-auto sm:w-[23rem]"
               data-lenis-prevent
             >
-              {/* Multimedia (Fotos / Video YouTube) */}
-              {(lugarSeleccionado.imagenes.length > 0 || lugarSeleccionado.youtubeId) && (
-                <div className="relative bg-black">
-                  {lugarSeleccionado.imagenes.length > 0 && lugarSeleccionado.youtubeId && (
-                    <div className="absolute left-3 top-3 z-20 flex gap-1 rounded-full bg-black/65 p-1 backdrop-blur-sm">
-                      <button
-                        type="button"
-                        onClick={() => setTabMedia("fotos")}
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
-                          tabMedia === "fotos" ? "bg-[#FFC107] text-[#1E3A2F]" : "text-white/85 hover:text-white"
-                        }`}
-                      >
-                        {t("Fotos")} ({lugarSeleccionado.imagenes.length})
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setTabMedia("video")}
-                        className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
-                          tabMedia === "video" ? "bg-[#FFC107] text-[#1E3A2F]" : "text-white/85 hover:text-white"
-                        }`}
-                      >
-                        {t("Video")}
-                      </button>
-                    </div>
-                  )}
-
-                  {tabMedia === "video" && lugarSeleccionado.youtubeId ? (
-                    <div className="aspect-video w-full">
-                      <iframe
-                        src={`https://www.youtube-nocookie.com/embed/${lugarSeleccionado.youtubeId}`}
-                        title={lugarSeleccionado.nombre}
-                        className="h-full w-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : (
-                    lugarSeleccionado.imagenes.length > 0 && (
-                      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#1E3A2F]/10">
-                        <img
-                          src={lugarSeleccionado.imagenes[indiceFoto] ?? lugarSeleccionado.imagenes[0]}
-                          alt={lugarSeleccionado.nombre}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                        {lugarSeleccionado.imagenes.length > 1 && (
-                          <>
-                            <button
-                              type="button"
-                              aria-label={t("Foto anterior")}
-                              onClick={() =>
-                                setIndiceFoto((i) =>
-                                  i === 0 ? lugarSeleccionado.imagenes.length - 1 : i - 1,
-                                )
-                              }
-                              className="absolute left-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/80"
-                            >
-                              <ChevronLeft className="size-4" aria-hidden="true" />
-                            </button>
-                            <button
-                              type="button"
-                              aria-label={t("Foto siguiente")}
-                              onClick={() =>
-                                setIndiceFoto((i) => (i + 1) % lugarSeleccionado.imagenes.length)
-                              }
-                              className="absolute right-2 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/80"
-                            >
-                              <ChevronRight className="size-4" aria-hidden="true" />
-                            </button>
-                            <span className="absolute bottom-2 right-2 rounded-full bg-black/65 px-2.5 py-0.5 text-[11px] font-semibold text-white">
-                              {indiceFoto + 1} / {lugarSeleccionado.imagenes.length}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    )
-                  )}
+              {lugarSeleccionado.youtubeId && (
+                <div className="aspect-video w-full bg-black">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${lugarSeleccionado.youtubeId}`}
+                    title={lugarSeleccionado.nombre}
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
               )}
 

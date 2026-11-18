@@ -12,6 +12,12 @@ import plazaIglesia from "../images/plaza-iglesia-1920.webp";
 import plazaSanMartin from "../images/plaza-san-martin.avif";
 import portalMurales from "../images/portal-murales-1920.webp";
 import portalSaladas from "../images/portal-saladas-1920.webp";
+import paseoEstacion1 from "../images/galeria/paseo-la-estacion-1.png";
+import paseoEstacion2 from "../images/galeria/paseo-la-estacion-2.png";
+import paseoEstacion3 from "../images/galeria/paseo-la-estacion-3.png";
+import paseoEstacion4 from "../images/galeria/paseo-la-estacion-4.png";
+import paseoEstacion5 from "../images/galeria/paseo-la-estacion-5.png";
+import paseoEstacion6 from "../images/galeria/paseo-la-estacion-6.png";
 import { traducirDato, type DiccionarioLocalizado, type Idioma } from "../i18n";
 
 interface GaleriaImagen {
@@ -34,6 +40,12 @@ export const galeria = [
   { id: "garza-blanca", image: garzaBlanca, alt: "Garza blanca en los paisajes naturales de Saladas" },
   { id: "costanera", image: costanera, alt: "Costanera de Saladas junto a la laguna" },
   { id: "carpincho", image: carpincho, alt: "Carpincho en su hábitat natural en la laguna de Saladas" },
+  { id: "paseo-estacion-1", image: paseoEstacion1, alt: "Espacios verdes del Paseo La Estación" },
+  { id: "paseo-estacion-2", image: paseoEstacion2, alt: "Murales ferroviarios del Paseo La Estación" },
+  { id: "paseo-estacion-3", image: paseoEstacion3, alt: "Detalle del mural ferroviario del Paseo La Estación" },
+  { id: "paseo-estacion-4", image: paseoEstacion4, alt: "Vista amplia del Paseo La Estación y sus senderos" },
+  { id: "paseo-estacion-5", image: paseoEstacion5, alt: "Juegos infantiles y tanque de agua en el Paseo La Estación" },
+  { id: "paseo-estacion-6", image: paseoEstacion6, alt: "Tanque de agua y juegos del Paseo La Estación" },
 ].map(({ id, image, alt }: GaleriaImagen) => ({
   id,
   img: image.src,
@@ -65,6 +77,12 @@ const traduccionesDatos: DiccionarioLocalizado = {
     "Garza blanca en los paisajes naturales de Saladas": "Great egret in Saladas' natural landscape",
     "Costanera de Saladas junto a la laguna": "Saladas waterfront by the lagoon",
     "Carpincho en su hábitat natural en la laguna de Saladas": "Capybara in its natural habitat at the Saladas lagoon",
+    "Espacios verdes del Paseo La Estación": "Green spaces at La Estación Walk",
+    "Murales ferroviarios del Paseo La Estación": "Railway murals at La Estación Walk",
+    "Detalle del mural ferroviario del Paseo La Estación": "Detail of the railway mural at La Estación Walk",
+    "Vista amplia del Paseo La Estación y sus senderos": "Wide view of La Estación Walk and its paths",
+    "Juegos infantiles y tanque de agua en el Paseo La Estación": "Playground and water tower at La Estación Walk",
+    "Tanque de agua y juegos del Paseo La Estación": "Water tower and playground at La Estación Walk",
   },
   // Traducciones al portugués brasileño.
   "pt-br": {
@@ -81,5 +99,11 @@ const traduccionesDatos: DiccionarioLocalizado = {
     "Garza blanca en los paisajes naturales de Saladas": "Garça-branca na paisagem natural de Saladas",
     "Costanera de Saladas junto a la laguna": "Orla de Saladas à beira da lagoa",
     "Carpincho en su hábitat natural en la laguna de Saladas": "Capivara em seu habitat natural na lagoa de Saladas",
+    "Espacios verdes del Paseo La Estación": "Áreas verdes do Passeio La Estación",
+    "Murales ferroviarios del Paseo La Estación": "Murais ferroviários do Passeio La Estación",
+    "Detalle del mural ferroviario del Paseo La Estación": "Detalhe do mural ferroviário do Passeio La Estación",
+    "Vista amplia del Paseo La Estación y sus senderos": "Vista ampla do Passeio La Estación e seus caminhos",
+    "Juegos infantiles y tanque de agua en el Paseo La Estación": "Parquinho e caixa d'água no Passeio La Estación",
+    "Tanque de agua y juegos del Paseo La Estación": "Caixa d'água e parquinho no Passeio La Estación",
   },
 };

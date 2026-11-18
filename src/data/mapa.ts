@@ -1,5 +1,4 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
+import { readFile } from "node:fs/promises";
 import { XMLParser } from "fast-xml-parser";
 
 export const MAPA_MY_MAPS_ID = "1tj6GcL6HF5-hWzGdsnbXp8sNzzqoqRg";
@@ -36,7 +35,6 @@ export interface LugarMapa {
   lat: number;
   lng: number;
   descripcion: string;
-  imagenes: string[];
   youtubeId: string | null;
 }
 
@@ -112,28 +110,13 @@ function limpiarDescripcion(html: string, nombreLugar: string): string {
   return limpio;
 }
 
-function extraerMultimedia(descripcionHtml: string, gxMediaLinks: string): {
-  imagenes: string[];
-  youtubeId: string | null;
-} {
+function extraerYoutubeId(descripcionHtml: string, gxMediaLinks: string): string | null {
   const fuentes = [gxMediaLinks, descripcionHtml].filter(Boolean).join(" ");
 
   const matchYoutube = fuentes.match(
     /(?:youtube\.com\/(?:embed\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
   );
-  const youtubeId = matchYoutube ? matchYoutube[1] : null;
-
-  const urlsImagenes = new Set<string>();
-  const regexMyMapsImg = /https:\/\/mymaps\.usercontent\.google\.com\/hostedimage\/[^\s"'<>]+/g;
-  for (const match of fuentes.matchAll(regexMyMapsImg)) {
-    const urlOptimizada = match[0].replace(/([?&])fife=[^&]+/, "$1fife=w800");
-    urlsImagenes.add(urlOptimizada);
-  }
-
-  return {
-    imagenes: Array.from(urlsImagenes),
-    youtubeId,
-  };
+  return matchYoutube ? matchYoutube[1] : null;
 }
 
 function parsearKml(kml: string): DatosMapa {
@@ -184,7 +167,7 @@ function parsearKml(kml: string): DatosMapa {
         : null;
       const gxMediaLinks = extraerTexto(gxMedia?.value);
 
-      const { imagenes, youtubeId } = extraerMultimedia(descripcionHtml, gxMediaLinks);
+      const youtubeId = extraerYoutubeId(descripcionHtml, gxMediaLinks);
       const descripcion = limpiarDescripcion(descripcionHtml, nombre);
 
       const slugBase = crearSlug(nombre) || "lugar";
@@ -205,7 +188,6 @@ function parsearKml(kml: string): DatosMapa {
         lat,
         lng,
         descripcion,
-        imagenes,
         youtubeId,
       });
       cantidadEnCategoria += 1;
@@ -226,63 +208,6 @@ function parsearKml(kml: string): DatosMapa {
 }
 
 let cacheDatosMapa: Promise<DatosMapa> | null = null;
-
-async function existeArchivo(ruta: string): Promise<boolean> {
-  try {
-    await access(ruta);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Descarga las imágenes de My Maps a `public/mapa-fotos/` en build time.
- * Google envía `Cross-Origin-Resource-Policy: same-site`, lo que impide
- * cargarlas directo en `<img>` desde otros dominios.
- */
-async function cachearImagenesLocales(datos: DatosMapa): Promise<void> {
-  const dirFotos = path.resolve(process.cwd(), "public", "mapa-fotos");
-  await mkdir(dirFotos, { recursive: true });
-
-  await Promise.all(
-    datos.lugares.map(async (lugar) => {
-      if (lugar.imagenes.length === 0) return;
-
-      const rutasLocales = await Promise.all(
-        lugar.imagenes.map(async (urlRemota, indice) => {
-          const nombreArchivo = `${lugar.id}-${indice + 1}.png`;
-          const rutaDisco = path.join(dirFotos, nombreArchivo);
-          const rutaPublica = `/mapa-fotos/${nombreArchivo}`;
-
-          if (await existeArchivo(rutaDisco)) {
-            return rutaPublica;
-          }
-
-          try {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 15000);
-            const resp = await fetch(urlRemota, { signal: controller.signal });
-            clearTimeout(timer);
-            if (resp.ok) {
-              const buffer = Buffer.from(await resp.arrayBuffer());
-              if (buffer.length > 0) {
-                await writeFile(rutaDisco, buffer);
-                return rutaPublica;
-              }
-            }
-          } catch (error) {
-            console.warn(`[mapa] No se pudo descargar la foto ${urlRemota}:`, error);
-          }
-
-          return null;
-        }),
-      );
-
-      lugar.imagenes = rutasLocales.filter((r): r is string => r !== null);
-    }),
-  );
-}
 
 async function cargarDatosMapa(): Promise<DatosMapa> {
   let datos: DatosMapa | null = null;
@@ -314,7 +239,6 @@ async function cargarDatosMapa(): Promise<DatosMapa> {
     datos = parsearKml(kmlRespaldo);
   }
 
-  await cachearImagenesLocales(datos);
   return datos;
 }
 
